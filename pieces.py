@@ -33,8 +33,31 @@ class Pawn(Piece):
         else:
             space = [self.row - 1, self.col]
         return space
+
+class Knight(Piece):
     
+    def __init__(self,row,col,color):
+        Piece.__init__(self, row, col, color)
+    
+class Bishop(Piece):
+    
+    def __init__(self,row,col,color):
+        Piece.__init__(self, row, col, color)
         
+class Rook(Piece):
+    
+    def __init__(self,row,col,color):
+        Piece.__init__(self, row, col, color)
+
+class Queen(Piece):
+    
+    def __init__(self,row,col,color):
+        Piece.__init__(self, row, col, color)
+
+class King(Piece):
+    
+    def __init__(self,row,col,color):
+        Piece.__init__(self, row, col, color)
         
         
 
