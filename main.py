@@ -6,13 +6,14 @@ Created on Apr 24, 2020
 from board import Board
 import pygame
 pygame.init()
-window_x = 600
-window_y = 600
+window_x = 400
+window_y = 400
 window = pygame.display.set_mode((window_x,window_y)) #Create window
 running = True
 clock = pygame.time.Clock()
 fps = 30
-board = Board()
+board = Board(window)
+board.show()
 while running:
     clock.tick(fps) #Update the clock by the fps every frame
     for event in pygame.event.get(): #Loop to check for user exit

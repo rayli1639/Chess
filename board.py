@@ -4,12 +4,28 @@ Created on Apr 24, 2020
 @author: RayL
 '''
 from pieces import Bishop,King,Queen,Pawn,Knight,Rook
+import pygame
 
+def setPawns(board):
+    i = 1
+    j = 0
+    while j < len(board):
+        board[i].append(Pawn(i,j,'black'))
+        j += 1
+    i = 6
+    j = 0
+    while j < len(board):
+        board[i].append(Pawn(i,j,'white'))
+        j += 1
+        
 class Board():
     
-    def __init__(self):
+    def __init__(self,window):
+        self.window = window
+        self.spaceSize = 50
         self.blackRow = 0
         self.whiteRow = 7
+        #Set up the board
         self.board = [
             [Rook(0,self.blackRow,'black'), Bishop(self.blackRow,1,'black'), 
              Knight(self.blackRow,2,'black'), Queen(self.blackRow,3,'black'),
@@ -22,22 +38,32 @@ class Board():
             [],
             [],
             [],
-            [Rook(self.whiteRow,0,'black'), Bishop(self.whiteRow,1,'black'), 
-             Knight(self.whiteRow,2,'black'), Queen(self.whiteRow,3,'black'),
-             King(self.whiteRow,4,'black'), Bishop(self.whiteRow,5,'black'), 
-             Knight(self.whiteRow,6,'black'), Rook(self.whiteRow,self.whiteRow,'black')]  
+            [Rook(self.whiteRow,0,'white'), Bishop(self.whiteRow,1,'white'), 
+             Knight(self.whiteRow,2,'white'), Queen(self.whiteRow,3,'white'),
+             King(self.whiteRow,4,'white'), Bishop(self.whiteRow,5,'white'), 
+             Knight(self.whiteRow,6,'white'), Rook(self.whiteRow,self.whiteRow,'white')]  
             ]
-        i = self.blackRow + 1
-        j = 0
-        while j < len(self.board) - 1:
-            self.board[i].append(Pawn(i,j,'black'))
-            j += 1
-        i = self.whiteRow - 1
-        j = 0
-        while j < len(self.board) - 1:
-            self.board[i].append(Pawn(i,j,'white'))
-            j += 1
-    
+        setPawns(self.board)
+            
+        #Draw the Board
+        for row in range(len(self.board)):
+            if row % 2 == 0:
+                c = 0
+            else:
+                c = 1
+            for col in range(len(self.board)):
+                if c == 0:
+                    pygame.draw.rect(self.window,
+                                    (232,235,239),
+                                    (col*50,row*50,self.spaceSize,self.spaceSize))
+                    c = 1
+                else:
+                    pygame.draw.rect(self.window,
+                                    (125,135,150),
+                                    (col*50,row*50,self.spaceSize,self.spaceSize))
+                    c = 0
+        pygame.display.update()
+        
     def hasPiece(self,row,col):
         ###Check if a coord on the board has a piece.###
         
@@ -58,7 +84,5 @@ class Board():
     def show(self):
         for i in range(0,len(self.board)):
             print(self.board[i])
-            
-board = Board()
-board.show()
+
         
