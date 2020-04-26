@@ -20,3 +20,7 @@ while running:
     for event in pygame.event.get(): #Loop to check for user exit
         if event.type == pygame.QUIT:
             running = False
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            coords = [x / board.spaceSize for x in pygame.mouse.get_pos()]
+            print (coords)
+            
