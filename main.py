@@ -21,6 +21,7 @@ while running:
         if event.type == pygame.QUIT:
             running = False
         if event.type == pygame.MOUSEBUTTONDOWN:
-            coords = [x / board.spaceSize for x in pygame.mouse.get_pos()]
-            print (coords)
+            coords = [x // board.spaceSize for x in pygame.mouse.get_pos()]
+            pieceSelected = board.board[coords[1]][coords[0]]
+            print(pieceSelected)
             
