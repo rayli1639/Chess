@@ -32,12 +32,12 @@ class Board():
              King(self.blackRow,4,'black'), Bishop(self.blackRow,5,'black'), 
              Knight(self.blackRow,6,'black'), Rook(self.blackRow,self.whiteRow,'black')
              ],
+            [],
             [0,0,0,0,0,0,0,0],
             [0,0,0,0,0,0,0,0],
             [0,0,0,0,0,0,0,0],
             [0,0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0,0],
+            [],
             [Rook(self.whiteRow,0,'white'), Bishop(self.whiteRow,1,'white'), 
              Knight(self.whiteRow,2,'white'), Queen(self.whiteRow,3,'white'),
              King(self.whiteRow,4,'white'), Bishop(self.whiteRow,5,'white'), 
@@ -96,9 +96,10 @@ class Board():
         
         for row in self.board:
             for piece in row:
-                self.window.blit(piece.image,
-                                (piece.col*self.spaceSize,piece.row*self.spaceSize)
-                                )
+                if piece != 0:
+                    self.window.blit(piece.image,
+                                    (piece.col*self.spaceSize,piece.row*self.spaceSize)
+                                    )
         pygame.display.update()
 
         
