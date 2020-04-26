@@ -5,6 +5,7 @@ Created on Apr 24, 2020
 '''
 from board import Board
 import pygame
+test = 2
 pygame.init()
 window_x = 400
 window_y = 400
