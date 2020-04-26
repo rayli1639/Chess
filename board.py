@@ -27,7 +27,7 @@ class Board():
         self.whiteRow = 7
         #Set up the board
         self.board = [
-            [Rook(0,self.blackRow,'black'), Bishop(self.blackRow,1,'black'), 
+            [Rook(self.blackRow,0,'black'), Bishop(self.blackRow,1,'black'), 
              Knight(self.blackRow,2,'black'), Queen(self.blackRow,3,'black'),
              King(self.blackRow,4,'black'), Bishop(self.blackRow,5,'black'), 
              Knight(self.blackRow,6,'black'), Rook(self.blackRow,self.whiteRow,'black')
@@ -55,12 +55,14 @@ class Board():
                 if c == 0:
                     pygame.draw.rect(self.window,
                                     (232,235,239),
-                                    (col*50,row*50,self.spaceSize,self.spaceSize))
+                                    (col*self.spaceSize,row*self.spaceSize,
+                                     self.spaceSize,self.spaceSize))
                     c = 1
                 else:
                     pygame.draw.rect(self.window,
                                     (125,135,150),
-                                    (col*50,row*50,self.spaceSize,self.spaceSize))
+                                    (col*self.spaceSize,row*self.spaceSize,
+                                     self.spaceSize,self.spaceSize))
                     c = 0
         pygame.display.update()
         
@@ -72,6 +74,8 @@ class Board():
         return False
     
     def move(self,piece,decision):
+        ###After a decision has been deemed valid, move the piece.###
+        
         row = decision[0]
         col = decision[1]
         space = self.board[row,col]
@@ -82,7 +86,19 @@ class Board():
             piece.col = col
     
     def show(self):
+        ###Show the array of the board###
+        
         for i in range(0,len(self.board)):
             print(self.board[i])
+    
+    def drawPieces(self):
+        ###Draw the pieces onto the board###
+        
+        for row in self.board:
+            for piece in row:
+                self.window.blit(piece.image,
+                                (piece.col*self.spaceSize,piece.row*self.spaceSize)
+                                )
+        pygame.display.update()
 
         
