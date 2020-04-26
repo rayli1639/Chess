@@ -16,6 +16,7 @@ board = Board(window)
 board.show()
 while running:
     clock.tick(fps) #Update the clock by the fps every frame
+    board.drawPieces()
     for event in pygame.event.get(): #Loop to check for user exit
         if event.type == pygame.QUIT:
             running = False

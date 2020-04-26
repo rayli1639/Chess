@@ -3,6 +3,7 @@ Created on Apr 24, 2020
 
 @author: RayL
 '''
+import pygame
 
 class Piece():
     
@@ -24,6 +25,10 @@ class Pawn(Piece):
     
     def __init__(self,row,col,color):
         Piece.__init__(self,row,col,color)
+        if self.color == 'black':
+            self.image = pygame.image.load('sprites/blackPawn.png')
+        else:
+            self.image = pygame.image.load('sprites/whitePawn.png')
         self.canMoveTwo = True
         
     def showSpaces(self):
@@ -39,27 +44,46 @@ class Knight(Piece):
     
     def __init__(self,row,col,color):
         Piece.__init__(self, row, col, color)
-    
+        if self.color == 'black':
+            self.image = pygame.image.load('sprites/blackKnight.png')
+        else:
+            self.image = pygame.image.load('sprites/whiteKnight.png')
+            
 class Bishop(Piece):
     
     def __init__(self,row,col,color):
         Piece.__init__(self, row, col, color)
+        if self.color == 'black':
+            self.image = pygame.image.load('sprites/blackBishop.png')
+        else:
+            self.image = pygame.image.load('sprites/whiteBishop.png')
         
 class Rook(Piece):
     
     def __init__(self,row,col,color):
         Piece.__init__(self, row, col, color)
+        if self.color == 'black':
+            self.image = pygame.image.load('sprites/blackRook.png')
+        else:
+            self.image = pygame.image.load('sprites/whiteRook.png')
 
 class Queen(Piece):
     
     def __init__(self,row,col,color):
         Piece.__init__(self, row, col, color)
-
+        if self.color == 'black':
+            self.image = pygame.image.load('sprites/blackQueen.png')
+        else:
+            self.image = pygame.image.load('sprites/whiteQueen.png')
+            
 class King(Piece):
     
     def __init__(self,row,col,color):
         Piece.__init__(self, row, col, color)
-        
+        if self.color == 'black':
+            self.image = pygame.image.load('sprites/blackKing.png')
+        else:
+            self.image = pygame.image.load('sprites/whiteKing.png')
         
 
 
