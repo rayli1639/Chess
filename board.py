@@ -44,8 +44,10 @@ class Board():
              Knight(self.whiteRow,6,'white'), Rook(self.whiteRow,self.whiteRow,'white')]  
             ]
         setPawns(self.board)
-            
-        #Draw the Board
+    
+    def drawBoard(self):
+        ###Draw Board###
+        
         for row in range(len(self.board)):
             if row % 2 == 0:
                 c = 0
@@ -64,7 +66,6 @@ class Board():
                                     (col*self.spaceSize,row*self.spaceSize,
                                      self.spaceSize,self.spaceSize))
                     c = 0
-        pygame.display.update()
         
     def hasPiece(self,row,col):
         ###Check if a coord on the board has a piece.###
@@ -78,13 +79,17 @@ class Board():
         
         row = decision[0]
         col = decision[1]
-        space = self.board[row,col]
-        if self.board[decision[0],decision[1]] != 0:
+        space = self.board[row][col]
+        if space != 0:
             piece.take(space)
         else:
+            self.board[piece.row][piece.col] = 0
+            self.board[row][col] = piece
             piece.row = row
             piece.col = col
-    
+            if piece.isPawn: 
+                piece.canMoveTwo = False
+            
     def show(self):
         ###Show the array of the board###
         
@@ -100,6 +105,5 @@ class Board():
                     self.window.blit(piece.image,
                                     (piece.col*self.spaceSize,piece.row*self.spaceSize)
                                     )
-        pygame.display.update()
 
         

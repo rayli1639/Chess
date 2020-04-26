@@ -12,6 +12,7 @@ class Piece():
         self.row = row
         self.col = col
         self.isAlive = True
+        self.isPawn = False
     
     def take(self,piece):
         ###Take the position of the other piece and destroy the piece###
@@ -30,15 +31,44 @@ class Pawn(Piece):
         else:
             self.image = pygame.image.load('sprites/whitePawn.png')
         self.canMoveTwo = True
+        self.isPawn = True
         
-    def showSpaces(self):
-        ###When this piece is selected, display possible moves###
+    def getSpaces(self,board,window):
+        ###When selected, highlight box, return possible spaces, and show possible spaces###
         
-        if self.color == 'black':
-            space = [self.row + 1, self.col]
+        possibleSpaces = []
+        if self.canMoveTwo:
+            r = 2
         else:
-            space = [self.row - 1, self.col]
-        return space
+            r = 1
+        while r > 0 :
+            if self.color == 'black':
+                space = [self.row + r, self.col]
+                if board.board[space[0]][space[1]] == 0:
+                    possibleSpaces.append(space)
+                else:
+                    possibleSpaces = []
+                    break
+            else:
+                space = [self.row - r, self.col]
+                if board.board[space[0]][space[1]] == 0:
+                    possibleSpaces.append(space)               
+                else:
+                    possibleSpaces = []
+                    break
+            r -= 1
+        currentPosCol = self.col*board.spaceSize
+        currentPosRow = self.row*board.spaceSize
+        pygame.draw.rect(window,(0,255,0),(currentPosCol,currentPosRow,
+                            board.spaceSize,board.spaceSize))
+        window.blit(self.image,(currentPosCol,currentPosRow))
+        for space in possibleSpaces:
+            if board.board[space[0]][space[1]] == 0:
+                pygame.draw.rect(window,(0,255,0),(space[1]*board.spaceSize,space[0]*board.spaceSize,
+                                board.spaceSize,board.spaceSize))
+                
+        return possibleSpaces
+            
 
 class Knight(Piece):
     
