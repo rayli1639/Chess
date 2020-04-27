@@ -75,20 +75,18 @@ class Board():
         return False
     
     def move(self,piece,decision):
-        ###After a decision has been deemed valid, move the piece.###
+        ###Move the piece using a valid decision.###
         
         row = decision[0]
         col = decision[1]
-        space = self.board[row][col]
-        if space != 0:
-            piece.take(space)
-        else:
-            self.board[piece.row][piece.col] = 0
-            self.board[row][col] = piece
-            piece.row = row
-            piece.col = col
-            if piece.isPawn: 
-                piece.canMoveTwo = False
+        self.board[piece.row][piece.col] = 0
+        self.board[row][col] = piece
+        piece.row = row
+        piece.col = col
+        if piece.isPawn: 
+            piece.canMoveTwo = False
+        for row in self.board:
+            print(row)
             
     def show(self):
         ###Show the array of the board###

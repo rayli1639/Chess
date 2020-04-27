@@ -14,13 +14,6 @@ class Piece():
         self.isAlive = True
         self.isPawn = False
     
-    def take(self,piece):
-        ###Take the position of the other piece and destroy the piece###
-        
-        self.row = piece.row
-        self.col = piece.col
-        piece.isAlive = False
-    
 
 class Pawn(Piece):
     
@@ -35,28 +28,45 @@ class Pawn(Piece):
         
     def getSpaces(self,board,window):
         ###When selected, highlight box, return possible spaces, and show possible spaces###
-        
+        possibleTakes = []
         possibleSpaces = []
+        x = 1
         if self.canMoveTwo:
             r = 2
         else:
             r = 1
-        while r > 0 :
+        while x <= r:
             if self.color == 'black':
-                space = [self.row + r, self.col]
+                space = [self.row + x, self.col]
+                if x == 1:
+                    if self.col + 1 <= 7:
+                        if (board.board[space[0]][self.col + 1] != 0 and
+                            board.board[space[0]][self.col + 1].color == 'white'):
+                            possibleTakes.append([space[0],self.col + 1])
+                    if self.col - 1 >= 0 :
+                        if (board.board[space[0]][self.col - 1] != 0 and
+                            board.board[space[0]][self.col - 1].color =='white'):
+                            possibleTakes.append([space[0],self.col - 1])
                 if board.board[space[0]][space[1]] == 0:
                     possibleSpaces.append(space)
                 else:
-                    possibleSpaces = []
                     break
             else:
-                space = [self.row - r, self.col]
+                space = [self.row - x, self.col]
+                if x == 1:
+                    if self.col + 1 <= 7:
+                        if (board.board[space[0]][self.col + 1] != 0 and
+                            board.board[space[0]][self.col + 1].color == 'black'):
+                            possibleTakes.append([space[0],self.col + 1])
+                    if self.col - 1 >= 0:
+                        if (board.board[space[0]][self.col - 1] != 0 and
+                            board.board[space[0]][self.col - 1].color =='black'):
+                            possibleTakes.append([space[0],self.col - 1])
                 if board.board[space[0]][space[1]] == 0:
-                    possibleSpaces.append(space)               
+                    possibleSpaces.append(space)
                 else:
-                    possibleSpaces = []
-                    break
-            r -= 1
+                    break               
+            x += 1
         currentPosCol = self.col*board.spaceSize
         currentPosRow = self.row*board.spaceSize
         pygame.draw.rect(window,(0,255,0),(currentPosCol,currentPosRow,
@@ -66,7 +76,10 @@ class Pawn(Piece):
             if board.board[space[0]][space[1]] == 0:
                 pygame.draw.rect(window,(0,255,0),(space[1]*board.spaceSize,space[0]*board.spaceSize,
                                 board.spaceSize,board.spaceSize))
-                
+        for space in possibleTakes:
+            pygame.draw.rect(window,(0,255,0),(space[1]*board.spaceSize,space[0]*board.spaceSize,
+                                board.spaceSize,board.spaceSize))
+            possibleSpaces.append(space)
         return possibleSpaces
             
 

@@ -22,39 +22,47 @@ possibleSpaces = []
 isSelected = False
 pieceSelected = 0
 clickBuffer = 0
+turn = 1
+turnCol = 'white'
+oppoCol = 'black'
 while running:
     clock.tick(fps) #Update the clock by the fps every frame
     for event in pygame.event.get(): #Loop to check for user exit
         if event.type == pygame.QUIT:
             running = False
-        if event.type == pygame.key.get_pressed():
-            print(board.board)
         if event.type == pygame.MOUSEBUTTONDOWN:
             coords = [x // board.spaceSize for x in pygame.mouse.get_pos()]
             coords.reverse()
+            clickedSpace = board.board[coords[0]][coords[1]]
             if not isSelected:
-                pieceSelected = board.board[coords[0]][coords[1]]
-                if pieceSelected != 0:
-                    possibleSpaces = pieceSelected.getSpaces(board,window)
-                print(pieceSelected)
-                print(coords)
-                print(possibleSpaces)
-                isSelected = True
-            elif isSelected:
-                if board.board[coords[0]][coords[1]] != 0:
-                    board.drawBoard()
-                    board.drawPieces()
-                    pieceSelected = board.board[coords[0]][coords[1]]
-                    possibleSpaces = pieceSelected.getSpaces(board,window)
+                if clickedSpace.color == turnCol:
+                    pieceSelected = clickedSpace
+                    if pieceSelected != 0:
+                        possibleSpaces = pieceSelected.getSpaces(board,window)
                     isSelected = True
-                else:
+            elif isSelected:
+                if clickedSpace == 0 or clickedSpace == pieceSelected or clickedSpace.color == oppoCol:
                     if coords in possibleSpaces:
                         board.move(pieceSelected,coords)
+                        turn += 1
                     pieceSelected = 0
                     possibleSpaces = []
                     isSelected = False
                     board.drawBoard()
                     board.drawPieces()
+                else:
+                    board.drawBoard()
+                    board.drawPieces()
+                    if clickedSpace.color == turnCol:
+                        pieceSelected = board.board[coords[0]][coords[1]]
+                        possibleSpaces = pieceSelected.getSpaces(board,window)
+                        isSelected = True
+        if turn % 2 == 1:
+            turnCol = 'white'
+            oppoCol = 'black'
+        else:
+            turnCol = 'black'
+            oppoCol = 'white'
     pygame.display.update()
     
             
