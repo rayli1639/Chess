@@ -5,6 +5,124 @@ Created on Apr 24, 2020
 '''
 import pygame
 
+def checkDiags(row,col,board,color,limit = None):
+    possibleSpaces = []
+    urStopped = False
+    ulStopped = False
+    drStopped = False
+    dlStopped = False
+    x = 1
+    while True:
+        if not urStopped:
+            if row - x >= 0 and col + x <= 7:
+                ur = board[row - x][col + x]
+                if ur == 0:
+                    possibleSpaces.append([row - x,col + x])
+                else:
+                    if ur.color != color:
+                        possibleSpaces.append([row - x, col + x])
+                    urStopped = True
+            else:
+                urStopped = True
+        if not ulStopped:
+            if row - x >= 0 and col - x >= 0:
+                ul = board[row - x][col - x]
+                if ul == 0:
+                    possibleSpaces.append([row - x,col - x])
+                else:
+                    if ul.color != color:
+                        possibleSpaces.append([row - x, col - x])
+                    ulStopped = True
+            else:
+                ulStopped = True
+        if not drStopped:
+            if row + x <= 7 and col + x <= 7:
+                dr = board[row + x][col + x]
+                if dr == 0:
+                    possibleSpaces.append([row + x,col + x])
+                else:
+                    if dr.color != color:
+                        possibleSpaces.append([row + x, col + x])
+                    drStopped = True
+            else:
+                drStopped = True
+        if not dlStopped:
+            if row + x <= 7 and col - x >= 0:
+                dl = board[row + x][col - x]
+                if dl == 0:
+                    possibleSpaces.append([row + x,col - x])
+                else:
+                    if dl.color != color:
+                        possibleSpaces.append([row + x, col - x])
+                    dlStopped = True
+            else:
+                dlStopped = True
+        x += 1
+        if limit is not None:
+            break
+        if urStopped and ulStopped and drStopped and dlStopped:
+            break
+    return possibleSpaces
+
+def checkFiles(row,col,board,color,limit = None):
+    possibleSpaces = []
+    uStopped = False
+    dStopped = False
+    rStopped = False
+    lStopped = False
+    x = 1
+    while True:
+        if not uStopped :
+            if row - x >= 0:
+                u = board[row - x][col]
+                if u == 0:
+                    possibleSpaces.append([row - x,col])
+                else:
+                    if u.color != color:
+                        possibleSpaces.append([row - x, col])
+                    uStopped = True
+            else:
+                uStopped = True
+        if not lStopped:
+            if col - x >= 0:
+                l = board[row][col - x]
+                if l == 0:
+                    possibleSpaces.append([row,col - x])
+                else:
+                    if l.color != color:
+                        possibleSpaces.append([row, col - x])
+                    lStopped = True
+            else:
+                lStopped = True
+        if not rStopped:
+            if col + x <= 7:
+                r = board[row][col + x]
+                if r == 0:
+                    possibleSpaces.append([row,col + x])
+                else:
+                    if r.color != color:
+                        possibleSpaces.append([row, col + x])
+                    rStopped = True
+            else:
+                rStopped = True
+        if not dStopped:
+            if row + x <= 7:
+                d = board[row + x][col]
+                if d == 0:
+                    possibleSpaces.append([row + x,col])
+                else:
+                    if d.color != color:
+                        possibleSpaces.append([row + x,col])
+                    dStopped = True
+            else:
+                dStopped = True
+        x += 1
+        if limit is not None:
+            break
+        if uStopped and lStopped and dStopped and rStopped:
+            break
+    return possibleSpaces
+
 class Piece():
     
     def __init__(self,row,col,color):
@@ -105,7 +223,7 @@ class Knight(Piece):
             [self.row -1, self.col -2]
             ]
         finalList = []
-        for x in range(len(possibleSpaces) - 1):
+        for x in range(len(possibleSpaces)):
             space = possibleSpaces[x]
             if ((space[0] <= 7 and space[1] <= 7) and 
                 (space[0] >= 0 and space[1] >= 0)): 
@@ -125,6 +243,12 @@ class Bishop(Piece):
         else:
             self.image = pygame.image.load('sprites/whiteBishop.png')
         
+    def getSpaces(self,board,window):
+        possibleSpaces = checkDiags(self.row,self.col,board.board, self.color)
+        self.drawPossibleSpaces(possibleSpaces, board, window)
+        return possibleSpaces
+        
+        
 class Rook(Piece):
     
     def __init__(self,row,col,color):
@@ -133,6 +257,11 @@ class Rook(Piece):
             self.image = pygame.image.load('sprites/blackRook.png')
         else:
             self.image = pygame.image.load('sprites/whiteRook.png')
+    
+    def getSpaces(self,board,window):
+        possibleSpaces = checkFiles(self.row,self.col,board.board,self.color)
+        self.drawPossibleSpaces(possibleSpaces, board, window)
+        return possibleSpaces
 
 class Queen(Piece):
     
@@ -143,6 +272,13 @@ class Queen(Piece):
         else:
             self.image = pygame.image.load('sprites/whiteQueen.png')
             
+    def getSpaces(self,board,window):
+        p1 = checkDiags(self.row,self.col,board.board,self.color)
+        p2 = checkFiles(self.row,self.col,board.board,self.color)
+        possibleSpaces = p1 + p2
+        self.drawPossibleSpaces(possibleSpaces, board, window)
+        return possibleSpaces
+    
 class King(Piece):
     
     def __init__(self,row,col,color):
@@ -152,7 +288,12 @@ class King(Piece):
         else:
             self.image = pygame.image.load('sprites/whiteKing.png')
         
-
+    def getSpaces(self,board,window):
+        p1 = checkDiags(self.row,self.col,board.board,self.color,limit = 'King')
+        p2 = checkFiles(self.row,self.col,board.board,self.color,limit = 'King')
+        possibleSpaces = p1 + p2
+        self.drawPossibleSpaces(possibleSpaces, board, window)
+        return possibleSpaces
 
         
     

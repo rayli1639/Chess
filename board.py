@@ -27,8 +27,8 @@ class Board():
         self.whiteRow = 7
         #Set up the board
         self.board = [
-            [Rook(self.blackRow,0,'black'), Bishop(self.blackRow,1,'black'), 
-             Knight(self.blackRow,2,'black'), Queen(self.blackRow,3,'black'),
+            [Rook(self.blackRow,0,'black'), Knight(self.blackRow,1,'black'), 
+             Bishop(self.blackRow,2,'black'), Queen(self.blackRow,3,'black'),
              King(self.blackRow,4,'black'), Bishop(self.blackRow,5,'black'), 
              Knight(self.blackRow,6,'black'), Rook(self.blackRow,self.whiteRow,'black')
              ],
@@ -38,8 +38,8 @@ class Board():
             [0,0,0,0,0,0,0,0],
             [0,0,0,0,0,0,0,0],
             [],
-            [Rook(self.whiteRow,0,'white'), Bishop(self.whiteRow,1,'white'), 
-             Knight(self.whiteRow,2,'white'), Queen(self.whiteRow,3,'white'),
+            [Rook(self.whiteRow,0,'white'), Knight(self.whiteRow,1,'white'), 
+             Bishop(self.whiteRow,2,'white'), Queen(self.whiteRow,3,'white'),
              King(self.whiteRow,4,'white'), Bishop(self.whiteRow,5,'white'), 
              Knight(self.whiteRow,6,'white'), Rook(self.whiteRow,self.whiteRow,'white')]  
             ]
