@@ -14,6 +14,15 @@ class Piece():
         self.isAlive = True
         self.isPawn = False
     
+    def drawPossibleSpaces(self,possibleSpaces,board,window):
+        currentPosCol = self.col*board.spaceSize
+        currentPosRow = self.row*board.spaceSize
+        pygame.draw.rect(window,(0,255,0),(currentPosCol,currentPosRow,
+                            board.spaceSize,board.spaceSize))
+        window.blit(self.image,(currentPosCol,currentPosRow))
+        for space in possibleSpaces:
+            pygame.draw.rect(window,(0,255,0),(space[1]*board.spaceSize,space[0]*board.spaceSize,
+                                board.spaceSize,board.spaceSize))
 
 class Pawn(Piece):
     
@@ -67,15 +76,7 @@ class Pawn(Piece):
                 else:
                     break               
             x += 1
-        currentPosCol = self.col*board.spaceSize
-        currentPosRow = self.row*board.spaceSize
-        pygame.draw.rect(window,(0,255,0),(currentPosCol,currentPosRow,
-                            board.spaceSize,board.spaceSize))
-        window.blit(self.image,(currentPosCol,currentPosRow))
-        for space in possibleSpaces:
-            if board.board[space[0]][space[1]] == 0:
-                pygame.draw.rect(window,(0,255,0),(space[1]*board.spaceSize,space[0]*board.spaceSize,
-                                board.spaceSize,board.spaceSize))
+        self.drawPossibleSpaces(possibleSpaces, board, window)
         for space in possibleTakes:
             pygame.draw.rect(window,(0,255,0),(space[1]*board.spaceSize,space[0]*board.spaceSize,
                                 board.spaceSize,board.spaceSize))
@@ -91,6 +92,29 @@ class Knight(Piece):
             self.image = pygame.image.load('sprites/blackKnight.png')
         else:
             self.image = pygame.image.load('sprites/whiteKnight.png')
+    
+    def getSpaces(self,board,window):
+        possibleSpaces = [
+            [self.row + 2, self.col + 1],
+            [self.row + 2, self.col - 1],
+            [self.row - 2,self.col + 1],
+            [self.row - 2, self.col - 1],
+            [self.row + 1,self.col + 2],
+            [self.row + 1,self.col - 2],
+            [self.row -1, self.col + 2],
+            [self.row -1, self.col -2]
+            ]
+        finalList = []
+        for x in range(len(possibleSpaces) - 1):
+            space = possibleSpaces[x]
+            if ((space[0] <= 7 and space[1] <= 7) and 
+                (space[0] >= 0 and space[1] >= 0)): 
+                    if (board.board[space[0]][space[1]] == 0 or 
+                        board.board[space[0]][space[1]].color != self.color):
+                        finalList.append(space)
+            x += 1
+        self.drawPossibleSpaces(finalList,board,window)
+        return finalList
             
 class Bishop(Piece):
     
