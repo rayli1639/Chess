@@ -17,6 +17,12 @@ def setPawns(board):
     while j < len(board):
         board[i].append(Pawn(i,j,'white'))
         j += 1
+
+def setPieces(board,p1,p2):
+    for piece in p1: 
+        board[0].append(piece)
+    for piece in p2:
+        board[7].append(piece)
         
 class Board():
     
@@ -26,24 +32,29 @@ class Board():
         self.blackRow = 0
         self.whiteRow = 7
         #Set up the board
-        self.board = [
-            [Rook(self.blackRow,0,'black'), Knight(self.blackRow,1,'black'), 
+        self.blackPieces =[Rook(self.blackRow,0,'black'), Knight(self.blackRow,1,'black'), 
              Bishop(self.blackRow,2,'black'), Queen(self.blackRow,3,'black'),
              King(self.blackRow,4,'black'), Bishop(self.blackRow,5,'black'), 
-             Knight(self.blackRow,6,'black'), Rook(self.blackRow,self.whiteRow,'black')
-             ],
-            [],
-            [0,0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0,0],
-            [],
-            [Rook(self.whiteRow,0,'white'), Knight(self.whiteRow,1,'white'), 
+             Knight(self.blackRow,6,'black'), Rook(self.blackRow,self.whiteRow,'black')]
+        
+        self.whitePieces = [Rook(self.whiteRow,0,'white'), Knight(self.whiteRow,1,'white'), 
              Bishop(self.whiteRow,2,'white'), Queen(self.whiteRow,3,'white'),
              King(self.whiteRow,4,'white'), Bishop(self.whiteRow,5,'white'), 
-             Knight(self.whiteRow,6,'white'), Rook(self.whiteRow,self.whiteRow,'white')]  
+             Knight(self.whiteRow,6,'white'), Rook(self.whiteRow,self.whiteRow,'white')]
+        
+        self.board = [
+            [],
+            [],
+            [0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0],
+            [],
+            [] 
             ]
         setPawns(self.board)
+        setPieces(self.board,self.blackPieces,self.whitePieces)
+        print(self.board)
     
     def drawBoard(self):
         ###Draw Board###
@@ -103,5 +114,11 @@ class Board():
                     self.window.blit(piece.image,
                                     (piece.col*self.spaceSize,piece.row*self.spaceSize)
                                     )
-
+    
+    def isKingChecked(self,king):
+        if king.color == 'white':
+            for piece in self.blackPieces:
+                for space in piece.getSpaces(self.board):
+                    a = 2
+                
         

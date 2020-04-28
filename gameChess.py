@@ -37,7 +37,8 @@ class GameChess():
                     if clickedSpace != 0 and clickedSpace.color == self.turnCol:
                         self.pieceSelected = clickedSpace
                         if self.pieceSelected != 0:
-                            self.possibleSpaces = self.pieceSelected.getSpaces(self.board,self.window)
+                            self.possibleSpaces = self.pieceSelected.getSpaces(self.board)
+                            self.pieceSelected.drawPossibleSpaces(self.possibleSpaces,self.board,self.window)
                         self.isSelected = True
                 elif self.isSelected:
                     if (clickedSpace == 0 or clickedSpace == self.pieceSelected or 
@@ -55,7 +56,8 @@ class GameChess():
                         self.board.drawPieces()
                         if clickedSpace.color == self.turnCol:
                             self.pieceSelected = self.board.board[coords[0]][coords[1]]
-                            self.possibleSpaces = self.pieceSelected.getSpaces(self.board,self.window)
+                            self.possibleSpaces = self.pieceSelected.getSpaces(self.board)
+                            self.pieceSelected.drawPossibleSpaces(self.possibleSpaces,self.board,self.window)
                             self.isSelected = True
         if self.turn % 2 == 1:
             self.turnCol = 'white'
