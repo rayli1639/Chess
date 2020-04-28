@@ -14,7 +14,6 @@ class GameChess():
         self.clock = pygame.time.Clock()
         self.fps = 30
         self.board = Board(self.window)
-        self.board.show()
         self.board.drawBoard()
         self.board.drawPieces()
         self.possibleSpaces = []
@@ -23,7 +22,13 @@ class GameChess():
         self.turn = 1
         self.turnCol = 'white'
         self.oppoCol = 'black'
+        self.whiteChecked = False
+        self.blackChecked = False
     
+    def checkIfRelieve(self,move):
+        if move:
+            return True
+        
     def play(self):
         self.clock.tick(self.fps) #Update the clock by the fps every frame
         for event in pygame.event.get(): #Loop to check for user exit
@@ -37,7 +42,10 @@ class GameChess():
                     if clickedSpace != 0 and clickedSpace.color == self.turnCol:
                         self.pieceSelected = clickedSpace
                         if self.pieceSelected != 0:
-                            self.possibleSpaces = self.pieceSelected.getSpaces(self.board)
+                            self.possibleSpaces = self.pieceSelected.getSpaces(self.board.board)
+                            self.possibleSpaces = self.pieceSelected.checkPossibleSpaces(self.possibleSpaces,
+                                                                                         self.board,
+                                                                                         self.turnCol)
                             self.pieceSelected.drawPossibleSpaces(self.possibleSpaces,self.board,self.window)
                         self.isSelected = True
                 elif self.isSelected:
@@ -56,13 +64,24 @@ class GameChess():
                         self.board.drawPieces()
                         if clickedSpace.color == self.turnCol:
                             self.pieceSelected = self.board.board[coords[0]][coords[1]]
-                            self.possibleSpaces = self.pieceSelected.getSpaces(self.board)
+                            self.possibleSpaces = self.pieceSelected.getSpaces(self.board.board)
+                            self.possibleSpaces = self.pieceSelected.checkPossibleSpaces(self.possibleSpaces,
+                                                                                         self.board,
+                                                                                         self.turnCol)
                             self.pieceSelected.drawPossibleSpaces(self.possibleSpaces,self.board,self.window)
-                            self.isSelected = True
+                            self.isSelected = True 
         if self.turn % 2 == 1:
+            if self.board.isKingChecked(self.board.whiteKing):
+                self.whiteChecked = True
+            else:
+                self.whiteChecked = False
             self.turnCol = 'white'
             self.oppoCol = 'black'
         else:
+            if self.board.isKingChecked(self.board.blackKing):
+                self.blackChecked = True
+            else:
+                self.blackChecked = False
             self.turnCol = 'black'
             self.oppoCol = 'white'
         pygame.display.update()

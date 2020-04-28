@@ -132,6 +132,19 @@ class Piece():
         self.isAlive = True
         self.isPawn = False
     
+    def checkPossibleSpaces(self,possibleSpaces,board,col):
+        finalList = []
+        for space in possibleSpaces:
+            dumBoard = [x[:] for x in board.board]
+            board.move(Pawn(self.row,self.col,self.color),[space[0],space[1]],dumBoard)
+            if col == 'white':
+                if not board.isKingChecked(board.whiteKing,dumBoard):
+                    finalList.append(space)
+            else:
+                if not board.isKingChecked(board.blackKing,dumBoard):
+                    finalList.append(space)
+        return finalList
+    
     def drawPossibleSpaces(self,possibleSpaces,board,window):
         currentPosCol = self.col*board.spaceSize
         currentPosRow = self.row*board.spaceSize
@@ -167,14 +180,14 @@ class Pawn(Piece):
                 space = [self.row + x, self.col]
                 if x == 1:
                     if self.col + 1 <= 7:
-                        if (board.board[space[0]][self.col + 1] != 0 and
-                            board.board[space[0]][self.col + 1].color == 'white'):
+                        if (board[space[0]][self.col + 1] != 0 and
+                            board[space[0]][self.col + 1].color == 'white'):
                             possibleTakes.append([space[0],self.col + 1])
                     if self.col - 1 >= 0 :
-                        if (board.board[space[0]][self.col - 1] != 0 and
-                            board.board[space[0]][self.col - 1].color =='white'):
+                        if (board[space[0]][self.col - 1] != 0 and
+                            board[space[0]][self.col - 1].color =='white'):
                             possibleTakes.append([space[0],self.col - 1])
-                if board.board[space[0]][space[1]] == 0:
+                if board[space[0]][space[1]] == 0:
                     possibleSpaces.append(space)
                 else:
                     break
@@ -182,14 +195,14 @@ class Pawn(Piece):
                 space = [self.row - x, self.col]
                 if x == 1:
                     if self.col + 1 <= 7:
-                        if (board.board[space[0]][self.col + 1] != 0 and
-                            board.board[space[0]][self.col + 1].color == 'black'):
+                        if (board[space[0]][self.col + 1] != 0 and
+                            board[space[0]][self.col + 1].color == 'black'):
                             possibleTakes.append([space[0],self.col + 1])
                     if self.col - 1 >= 0:
-                        if (board.board[space[0]][self.col - 1] != 0 and
-                            board.board[space[0]][self.col - 1].color =='black'):
+                        if (board[space[0]][self.col - 1] != 0 and
+                            board[space[0]][self.col - 1].color =='black'):
                             possibleTakes.append([space[0],self.col - 1])
-                if board.board[space[0]][space[1]] == 0:
+                if board[space[0]][space[1]] == 0:
                     possibleSpaces.append(space)
                 else:
                     break               
@@ -224,8 +237,8 @@ class Knight(Piece):
             space = possibleSpaces[x]
             if ((space[0] <= 7 and space[1] <= 7) and 
                 (space[0] >= 0 and space[1] >= 0)): 
-                    if (board.board[space[0]][space[1]] == 0 or 
-                        board.board[space[0]][space[1]].color != self.color):
+                    if (board[space[0]][space[1]] == 0 or 
+                        board[space[0]][space[1]].color != self.color):
                         finalList.append(space)
             x += 1
         return finalList
@@ -240,7 +253,7 @@ class Bishop(Piece):
             self.image = pygame.image.load('sprites/whiteBishop.png')
         
     def getSpaces(self,board):
-        possibleSpaces = checkDiags(self.row,self.col,board.board, self.color)
+        possibleSpaces = checkDiags(self.row,self.col,board, self.color)
         return possibleSpaces
         
         
@@ -254,7 +267,7 @@ class Rook(Piece):
             self.image = pygame.image.load('sprites/whiteRook.png')
     
     def getSpaces(self,board):
-        possibleSpaces = checkFiles(self.row,self.col,board.board,self.color)
+        possibleSpaces = checkFiles(self.row,self.col,board,self.color)
         return possibleSpaces
 
 class Queen(Piece):
@@ -267,8 +280,8 @@ class Queen(Piece):
             self.image = pygame.image.load('sprites/whiteQueen.png')
             
     def getSpaces(self,board):
-        p1 = checkDiags(self.row,self.col,board.board,self.color)
-        p2 = checkFiles(self.row,self.col,board.board,self.color)
+        p1 = checkDiags(self.row,self.col,board,self.color)
+        p2 = checkFiles(self.row,self.col,board,self.color)
         possibleSpaces = p1 + p2
         return possibleSpaces
     
@@ -282,8 +295,8 @@ class King(Piece):
             self.image = pygame.image.load('sprites/whiteKing.png')
         
     def getSpaces(self,board):
-        p1 = checkDiags(self.row,self.col,board.board,self.color,limit = 'King')
-        p2 = checkFiles(self.row,self.col,board.board,self.color,limit = 'King')
+        p1 = checkDiags(self.row,self.col,board,self.color,limit = 'King')
+        p2 = checkFiles(self.row,self.col,board,self.color,limit = 'King')
         possibleSpaces = p1 + p2
         return possibleSpaces
 

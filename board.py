@@ -5,7 +5,7 @@ Created on Apr 24, 2020
 '''
 from pieces import Bishop,King,Queen,Pawn,Knight,Rook
 import pygame
-
+from copy import deepcopy
 def setPawns(board):
     i = 1
     j = 0
@@ -31,15 +31,17 @@ class Board():
         self.spaceSize = 50
         self.blackRow = 0
         self.whiteRow = 7
+        self.whiteKing = King(self.whiteRow,4,'white')
+        self.blackKing = King(self.blackRow,4,'black')
         #Set up the board
         self.blackPieces =[Rook(self.blackRow,0,'black'), Knight(self.blackRow,1,'black'), 
              Bishop(self.blackRow,2,'black'), Queen(self.blackRow,3,'black'),
-             King(self.blackRow,4,'black'), Bishop(self.blackRow,5,'black'), 
+             self.blackKing, Bishop(self.blackRow,5,'black'), 
              Knight(self.blackRow,6,'black'), Rook(self.blackRow,self.whiteRow,'black')]
         
         self.whitePieces = [Rook(self.whiteRow,0,'white'), Knight(self.whiteRow,1,'white'), 
              Bishop(self.whiteRow,2,'white'), Queen(self.whiteRow,3,'white'),
-             King(self.whiteRow,4,'white'), Bishop(self.whiteRow,5,'white'), 
+             self.whiteKing, Bishop(self.whiteRow,5,'white'), 
              Knight(self.whiteRow,6,'white'), Rook(self.whiteRow,self.whiteRow,'white')]
         
         self.board = [
@@ -54,7 +56,6 @@ class Board():
             ]
         setPawns(self.board)
         setPieces(self.board,self.blackPieces,self.whitePieces)
-        print(self.board)
     
     def drawBoard(self):
         ###Draw Board###
@@ -77,34 +78,29 @@ class Board():
                                     (col*self.spaceSize,row*self.spaceSize,
                                      self.spaceSize,self.spaceSize))
                     c = 0
-        
-    def hasPiece(self,row,col):
-        ###Check if a coord on the board has a piece.###
-        
-        if self.board[row][col] != 0:
-            return True
-        return False
     
-    def move(self,piece,decision):
+    def move(self,piece,decision,dumBoard = None):
         ###Move the piece using a valid decision.###
-        
+        if dumBoard != None:
+            board = dumBoard
+        else:
+            board = self.board
         row = decision[0]
         col = decision[1]
-        self.board[piece.row][piece.col] = 0
-        self.board[row][col] = piece
-        piece.row = row
-        piece.col = col
-        if piece.isPawn: 
-            piece.canMoveTwo = False
-        for row in self.board:
-            print(row)
-            
-    def show(self):
-        ###Show the array of the board###
+        rowOld = piece.row
+        colOld = piece.col
+        board[rowOld][colOld] = 0
+        board[row][col] = piece
+        if dumBoard == None:
+            piece.row = row
+            piece.col = col
+            if piece.isPawn: 
+                piece.canMoveTwo = False
         
-        for i in range(0,len(self.board)):
-            print(self.board[i])
-    
+    def getBoard(self):
+        ###Get the Board for Dummy Purposes###
+        board = self.board.copy()
+        return board
     def drawPieces(self):
         ###Draw the pieces onto the board###
         
@@ -115,10 +111,30 @@ class Board():
                                     (piece.col*self.spaceSize,piece.row*self.spaceSize)
                                     )
     
-    def isKingChecked(self,king):
+    def isKingChecked(self,king,dumBoard = None): 
+        if dumBoard is not None:
+            board = dumBoard
+        else:
+            board = self.board
         if king.color == 'white':
-            for piece in self.blackPieces:
-                for space in piece.getSpaces(self.board):
-                    a = 2
+            for row in board:
+                for piece in row:
+                    if piece != 0:
+                        if piece.color == 'black':
+                            for space in piece.getSpaces(board):
+                                if space[0] == king.row and space[1] == king.col:
+                                    print("The White King is in Check:" + str(space))
+                                    return True
+        else:
+            for row in board:
+                for piece in row:
+                    if piece != 0:
+                        if piece.color == 'white':
+                            for space in piece.getSpaces(board):
+                                for space in piece.getSpaces(board):
+                                    if space[0] == king.row and space[1] == king.col:
+                                        print("The Black King is in Check" + str(space))
+                                        return True
+        return False
                 
         
