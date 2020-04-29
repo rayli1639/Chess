@@ -125,7 +125,6 @@ class Board():
                         if piece.color == 'black':
                             for space in piece.getSpaces(board):
                                 if space[0] == s[0] and space[1] == s[1]:
-                                    print("The White King is in Check:" + str(space))
                                     return True
         else:
             for row in board:
@@ -135,7 +134,6 @@ class Board():
                             for space in piece.getSpaces(board):
                                 for space in piece.getSpaces(board):
                                     if space[0] == s[0] and space[1] == s[1]:
-                                        print("The Black King is in Check" + str(space))
                                         return True
         return False
                 

@@ -295,7 +295,6 @@ class King(Piece):
             self.image = pygame.image.load('sprites/whiteKing.png')
     
     def checkPossibleSpaces(self,possibleSpaces,board,col):
-        print("This Ran")
         finalList = []
         for space in possibleSpaces:
             dumBoard = [x[:] for x in board.board]
@@ -304,7 +303,6 @@ class King(Piece):
             board.move(dumKing,[space[0],space[1]],dumBoard)
             if not board.isKingChecked(dumKing,dumBoard,[space[0],space[1]]):
                 finalList.append(space)
-                print('space has been added')
         return finalList
 
     def getSpaces(self,board):

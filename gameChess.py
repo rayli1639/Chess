@@ -42,6 +42,20 @@ class GameChess():
                                                                      self.board,
                                                                      self.turnCol)
         self.pieceSelected.drawPossibleSpaces(self.possibleSpaces,self.board,self.window)
+    
+    def isMated(self):
+        for row in self.board.board:
+            for piece in row:
+                if piece != 0:
+                    if piece.color == self.turnCol:
+                        possibleSpaces = piece.getSpaces(self.board.board)
+                        possibleSpaces = piece.checkPossibleSpaces(possibleSpaces,
+                                                                   self.board,
+                                                                   self.turnCol)
+                        if possibleSpaces != []:
+                            return False
+        return True
+        
         
     def play(self):
         self.clock.tick(self.fps) #Update the clock by the fps every frame
@@ -86,4 +100,7 @@ class GameChess():
                 self.blackChecked = False
             self.turnCol = 'black'
             self.oppoCol = 'white'
+        if self.isMated():
+            print(f'{self.oppoCol} has won. {self.turnCol} was checkmated.')
+            break
         pygame.display.update()
