@@ -24,6 +24,13 @@ class GameChess():
         self.turnCol = 'white'
         self.oppoCol = 'black'
     
+    def resetBoard(self):
+        self.pieceSelected = 0
+        self.possibleSpaces = []
+        self.isSelected = False
+        self.board.drawBoard()
+        self.board.drawPieces()
+        
     def play(self):
         self.clock.tick(self.fps) #Update the clock by the fps every frame
         for event in pygame.event.get(): #Loop to check for user exit
@@ -46,11 +53,7 @@ class GameChess():
                         if coords in self.possibleSpaces:
                             self.board.move(self.pieceSelected,coords)
                             self.turn += 1
-                        self.pieceSelected = 0
-                        self.possibleSpaces = []
-                        self.isSelected = False
-                        self.board.drawBoard()
-                        self.board.drawPieces()
+                        self.resetBoard
                     else:
                         self.board.drawBoard()
                         self.board.drawPieces()
