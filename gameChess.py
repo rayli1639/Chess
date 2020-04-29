@@ -28,6 +28,20 @@ class GameChess():
     def checkIfRelieve(self,move):
         if move:
             return True
+    
+    def resetBoard(self):
+        self.pieceSelected = 0
+        self.possibleSpaces = []
+        self.isSelected = False
+        self.board.drawBoard()
+        self.board.drawPieces()
+    
+    def pieceAction(self):
+        self.possibleSpaces = self.pieceSelected.getSpaces(self.board.board)
+        self.possibleSpaces = self.pieceSelected.checkPossibleSpaces(self.possibleSpaces,
+                                                                     self.board,
+                                                                     self.turnCol)
+        self.pieceSelected.drawPossibleSpaces(self.possibleSpaces,self.board,self.window)
         
     def play(self):
         self.clock.tick(self.fps) #Update the clock by the fps every frame
@@ -42,11 +56,7 @@ class GameChess():
                     if clickedSpace != 0 and clickedSpace.color == self.turnCol:
                         self.pieceSelected = clickedSpace
                         if self.pieceSelected != 0:
-                            self.possibleSpaces = self.pieceSelected.getSpaces(self.board.board)
-                            self.possibleSpaces = self.pieceSelected.checkPossibleSpaces(self.possibleSpaces,
-                                                                                         self.board,
-                                                                                         self.turnCol)
-                            self.pieceSelected.drawPossibleSpaces(self.possibleSpaces,self.board,self.window)
+                            self.pieceAction()
                         self.isSelected = True
                 elif self.isSelected:
                     if (clickedSpace == 0 or clickedSpace == self.pieceSelected or 
@@ -54,21 +64,13 @@ class GameChess():
                         if coords in self.possibleSpaces:
                             self.board.move(self.pieceSelected,coords)
                             self.turn += 1
-                        self.pieceSelected = 0
-                        self.possibleSpaces = []
-                        self.isSelected = False
-                        self.board.drawBoard()
-                        self.board.drawPieces()
+                        self.resetBoard()
                     else:
                         self.board.drawBoard()
                         self.board.drawPieces()
                         if clickedSpace.color == self.turnCol:
                             self.pieceSelected = self.board.board[coords[0]][coords[1]]
-                            self.possibleSpaces = self.pieceSelected.getSpaces(self.board.board)
-                            self.possibleSpaces = self.pieceSelected.checkPossibleSpaces(self.possibleSpaces,
-                                                                                         self.board,
-                                                                                         self.turnCol)
-                            self.pieceSelected.drawPossibleSpaces(self.possibleSpaces,self.board,self.window)
+                            self.pieceAction()
                             self.isSelected = True 
         if self.turn % 2 == 1:
             if self.board.isKingChecked(self.board.whiteKing):

@@ -100,9 +100,10 @@ class Board():
         ###Get the Board for Dummy Purposes###
         board = self.board.copy()
         return board
+    
     def drawPieces(self):
         ###Draw the pieces onto the board###
-        
+
         for row in self.board:
             for piece in row:
                 if piece != 0:
@@ -110,18 +111,20 @@ class Board():
                                     (piece.col*self.spaceSize,piece.row*self.spaceSize)
                                     )
     
-    def isKingChecked(self,king,dumBoard = None): 
+    def isKingChecked(self,king,dumBoard = None,s = None): 
         if dumBoard is not None:
             board = dumBoard
         else:
             board = self.board
+        if s is None:
+            s = [king.row,king.col]
         if king.color == 'white':
             for row in board:
                 for piece in row:
                     if piece != 0:
                         if piece.color == 'black':
                             for space in piece.getSpaces(board):
-                                if space[0] == king.row and space[1] == king.col:
+                                if space[0] == s[0] and space[1] == s[1]:
                                     print("The White King is in Check:" + str(space))
                                     return True
         else:
@@ -131,7 +134,7 @@ class Board():
                         if piece.color == 'white':
                             for space in piece.getSpaces(board):
                                 for space in piece.getSpaces(board):
-                                    if space[0] == king.row and space[1] == king.col:
+                                    if space[0] == s[0] and space[1] == s[1]:
                                         print("The Black King is in Check" + str(space))
                                         return True
         return False
