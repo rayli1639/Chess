@@ -86,21 +86,21 @@ class GameChess():
                             self.pieceSelected = self.board.board[coords[0]][coords[1]]
                             self.pieceAction()
                             self.isSelected = True 
-        if self.turn % 2 == 1:
-            if self.board.isKingChecked(self.board.whiteKing):
-                self.whiteChecked = True
+            if self.turn % 2 == 1:
+                if self.board.isKingChecked(self.board.whiteKing):
+                    self.whiteChecked = True
+                else:
+                    self.whiteChecked = False
+                self.turnCol = 'white'
+                self.oppoCol = 'black'
             else:
-                self.whiteChecked = False
-            self.turnCol = 'white'
-            self.oppoCol = 'black'
-        else:
-            if self.board.isKingChecked(self.board.blackKing):
-                self.blackChecked = True
-            else:
-                self.blackChecked = False
-            self.turnCol = 'black'
-            self.oppoCol = 'white'
-        if self.isMated():
-            print(f'{self.oppoCol} has won. {self.turnCol} was checkmated.')
-            break
+                if self.board.isKingChecked(self.board.blackKing):
+                    self.blackChecked = True
+                else:
+                    self.blackChecked = False
+                self.turnCol = 'black'
+                self.oppoCol = 'white'
+            if self.isMated():
+                print(f'{self.oppoCol} has won. {self.turnCol} was checkmated.')
+                break
         pygame.display.update()
