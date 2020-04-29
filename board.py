@@ -5,7 +5,6 @@ Created on Apr 24, 2020
 '''
 from pieces import Bishop,King,Queen,Pawn,Knight,Rook
 import pygame
-from copy import deepcopy
 def setPawns(board):
     i = 1
     j = 0
