@@ -5,6 +5,55 @@ Created on Apr 24, 2020
 '''
 import pygame
 
+
+def isKingChecked(king,board,dumBoard,s): 
+        if dumBoard is not None:
+            board = dumBoard
+            if s is None:
+                s = [king.row,king.col]
+            if king.color == 'white':
+                for row in board:
+                    for piece in row:
+                        if piece != 0:
+                            if piece.color == 'black':
+                                for space in piece.getSpaces(board,True):
+                                    if space[0] == s[0] and space[1] == s[1]:
+                                        print("Check was checked for")
+                                        return True
+            else:
+                for row in board:
+                    for piece in row:
+                        if piece != 0:
+                            if piece.color == 'white':
+                                for space in piece.getSpaces(board,True):
+                                    if space[0] == s[0] and space[1] == s[1]:
+                                        print("Check was checked for")
+                                        return True
+            return False
+            
+        else:
+            if s is None:
+                s = [king.row,king.col]
+            if king.color == 'white':
+                for row in board.board:
+                    for piece in row:
+                        if piece != 0:
+                            if piece.color == 'black':
+                                for space in piece.getSpaces(board):
+                                    if space[0] == s[0] and space[1] == s[1]:
+                                        return True
+                                        print("king in check")
+            else:
+                for row in board.board:
+                    for piece in row:
+                        if piece != 0:
+                            if piece.color == 'white':
+                                for space in piece.getSpaces(board):
+                                    if space[0] == s[0] and space[1] == s[1]:
+                                        return True
+                                        print("king in Check")
+            return False
+
 def checkDiags(row,col,board,color,limit = None):
     possibleSpaces = []
     urStopped = False
@@ -131,6 +180,8 @@ class Piece():
         self.col = col
         self.isAlive = True
         self.isPawn = False
+        self.isKing = False
+        self.isRook = False
     
     def checkPossibleSpaces(self,possibleSpaces,board,col):
         finalList = []
@@ -138,10 +189,10 @@ class Piece():
             dumBoard = [x[:] for x in board.board]
             board.move(Pawn(self.row,self.col,self.color),[space[0],space[1]],dumBoard)
             if col == 'white':
-                if not board.isKingChecked(board.whiteKing,dumBoard):
+                if not isKingChecked(board.whiteKing,None,dumBoard,None):
                     finalList.append(space)
             else:
-                if not board.isKingChecked(board.blackKing,dumBoard):
+                if not isKingChecked(board.blackKing,None,dumBoard,None):
                     finalList.append(space)
         return finalList
     
@@ -165,11 +216,16 @@ class Pawn(Piece):
             self.image = pygame.image.load('sprites/whitePawn.png')
         self.canMoveTwo = True
         self.isPawn = True
+        self.canEnPassant = [False,[0,0]]
         
-    def getSpaces(self,board):
+    def getSpaces(self,board,fake = False):
         ###When selected, highlight box, return possible spaces, and show possible spaces###
         possibleTakes = []
         possibleSpaces = []
+        if fake:
+            board = board
+        else:
+            board = board.board
         x = 1
         if self.canMoveTwo:
             r = 2
@@ -209,6 +265,8 @@ class Pawn(Piece):
             x += 1
         for space in possibleTakes:
             possibleSpaces.append(space)
+        if self.canEnPassant[0]:
+            possibleSpaces.append(self.canEnPassant[1])
         return possibleSpaces
             
 
@@ -221,7 +279,11 @@ class Knight(Piece):
         else:
             self.image = pygame.image.load('sprites/whiteKnight.png')
     
-    def getSpaces(self,board):
+    def getSpaces(self,board,fake = False):
+        if fake:
+            board = board
+        else:
+            board = board.board
         possibleSpaces = [
             [self.row + 2, self.col + 1],
             [self.row + 2, self.col - 1],
@@ -252,7 +314,11 @@ class Bishop(Piece):
         else:
             self.image = pygame.image.load('sprites/whiteBishop.png')
         
-    def getSpaces(self,board):
+    def getSpaces(self,board,fake = False):
+        if fake:
+            board = board
+        else:
+            board = board.board
         possibleSpaces = checkDiags(self.row,self.col,board, self.color)
         return possibleSpaces
         
@@ -265,8 +331,14 @@ class Rook(Piece):
             self.image = pygame.image.load('sprites/blackRook.png')
         else:
             self.image = pygame.image.load('sprites/whiteRook.png')
-    
-    def getSpaces(self,board):
+        self.isRook = True
+        self.canCastle = True
+
+    def getSpaces(self,board,fake = False):
+        if fake:
+            board = board
+        else:
+            board = board.board
         possibleSpaces = checkFiles(self.row,self.col,board,self.color)
         return possibleSpaces
 
@@ -279,7 +351,11 @@ class Queen(Piece):
         else:
             self.image = pygame.image.load('sprites/whiteQueen.png')
             
-    def getSpaces(self,board):
+    def getSpaces(self,board,fake = False):
+        if fake: 
+            board = board
+        else:
+            board = board.board
         p1 = checkDiags(self.row,self.col,board,self.color)
         p2 = checkFiles(self.row,self.col,board,self.color)
         possibleSpaces = p1 + p2
@@ -293,22 +369,55 @@ class King(Piece):
             self.image = pygame.image.load('sprites/blackKing.png')
         else:
             self.image = pygame.image.load('sprites/whiteKing.png')
+        self.isKing = True
+        self.canCastle = True
     
     def checkPossibleSpaces(self,possibleSpaces,board,col):
         finalList = []
         for space in possibleSpaces:
             dumBoard = [x[:] for x in board.board]
             dumKing = King(self.row,self.col,col)
+            dumKing.canCastle = False
             dumBoard[self.row][self.col] = dumKing
             board.move(dumKing,[space[0],space[1]],dumBoard)
-            if not board.isKingChecked(dumKing,dumBoard,[space[0],space[1]]):
+            if not isKingChecked(dumKing,None,dumBoard,[space[0],space[1]]):
                 finalList.append(space)
         return finalList
+    
+    def attemptCastle(self,board):
+        finalList = []
+        if board.board[self.row][0].isRook and board.board[self.row][0].canCastle:
+            if board.board[self.row][self.col - 1] == 0 and board.board[self.row][self.col -2] == 0:
+                p = self.checkPossibleSpaces([[self.row,self.col - 1],[self.row,self.col - 2]],
+                                              board,
+                                              self.color
+                                            )
+                if len(p) == 2:
+                    finalList.append([self.row,self.col - 2,'CLong'])
+                    
+        if board.board[self.row][7].isRook and board.board[self.row][7].canCastle:
+            if board.board[self.row][self.col + 1] == 0 and board.board[self.row][self.col + 2] == 0:
+                p = self.checkPossibleSpaces([[self.row,self.col + 1],[self.row,self.col + 2]],
+                                              board,
+                                              self.color
+                                            )
+                if len(p) == 2:
+                    finalList.append([self.row,self.col + 2,'CShort'])
+        return finalList
+        
 
-    def getSpaces(self,board):
+    def getSpaces(self,board,fake = False):
+        possibleSpaces = []
+        if fake:
+            board = board
+        else:
+            b1 = board
+            board = board.board
+            if self.canCastle:
+                possibleSpaces += self.attemptCastle(b1)
         p1 = checkDiags(self.row,self.col,board,self.color,limit = 'King')
         p2 = checkFiles(self.row,self.col,board,self.color,limit = 'King')
-        possibleSpaces = p1 + p2
+        possibleSpaces += p1 + p2
         return possibleSpaces
 
         

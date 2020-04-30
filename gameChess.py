@@ -5,6 +5,7 @@ Created on Apr 27, 2020
 '''
 import pygame
 from board import Board
+from pieces import isKingChecked
 
 class GameChess():
     
@@ -37,7 +38,7 @@ class GameChess():
         self.board.drawPieces()
     
     def pieceAction(self):
-        self.possibleSpaces = self.pieceSelected.getSpaces(self.board.board)
+        self.possibleSpaces = self.pieceSelected.getSpaces(self.board)
         self.possibleSpaces = self.pieceSelected.checkPossibleSpaces(self.possibleSpaces,
                                                                      self.board,
                                                                      self.turnCol)
@@ -48,7 +49,7 @@ class GameChess():
             for piece in row:
                 if piece != 0:
                     if piece.color == self.turnCol:
-                        possibleSpaces = piece.getSpaces(self.board.board)
+                        possibleSpaces = piece.getSpaces(self.board.board,True)
                         possibleSpaces = piece.checkPossibleSpaces(possibleSpaces,
                                                                    self.board,
                                                                    self.turnCol)
@@ -75,9 +76,12 @@ class GameChess():
                 elif self.isSelected:
                     if (clickedSpace == 0 or clickedSpace == self.pieceSelected or 
                         clickedSpace.color == self.oppoCol):
-                        if coords in self.possibleSpaces:
-                            self.board.move(self.pieceSelected,coords)
-                            self.turn += 1
+                        for space in self.possibleSpaces:
+                            print(space)
+                            print(coords)
+                            if coords[0] == space[0] and coords[1] == space[1]:
+                                self.board.move(self.pieceSelected,space)
+                                self.turn += 1
                         self.resetBoard()
                     else:
                         self.board.drawBoard()
@@ -87,20 +91,31 @@ class GameChess():
                             self.pieceAction()
                             self.isSelected = True 
             if self.turn % 2 == 1:
-                if self.board.isKingChecked(self.board.whiteKing):
+                if isKingChecked(self.board.whiteKing,self.board,None,None):
                     self.whiteChecked = True
                 else:
                     self.whiteChecked = False
                 self.turnCol = 'white'
                 self.oppoCol = 'black'
+                for row in self.board.board:
+                    for piece in row:
+                        if piece != 0:
+                            if piece.isPawn and piece.color != self.turnCol:
+                                piece.canEnPassant = [False,[0,0]]
             else:
-                if self.board.isKingChecked(self.board.blackKing):
+                if isKingChecked(self.board.blackKing,self.board,None,None):
                     self.blackChecked = True
                 else:
                     self.blackChecked = False
                 self.turnCol = 'black'
                 self.oppoCol = 'white'
+                for row in self.board.board:
+                    for piece in row:
+                        if piece != 0:
+                            if piece.isPawn and piece.color != self.turnCol:
+                                piece.canEnPassant = [False,[0,0]]
             if self.isMated():
                 print(f'{self.oppoCol} has won. {self.turnCol} was checkmated.')
+                self.running = False
                 break
         pygame.display.update()

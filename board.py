@@ -5,6 +5,7 @@ Created on Apr 24, 2020
 '''
 from pieces import Bishop,King,Queen,Pawn,Knight,Rook
 import pygame
+
 def setPawns(board):
     i = 1
     j = 0
@@ -88,13 +89,45 @@ class Board():
         col = decision[1]
         rowOld = piece.row
         colOld = piece.col
-        board[rowOld][colOld] = 0
+        if decision[-1] == 'CLong':
+            board[row][col + 1] = Rook(row,col + 1, piece.color)
+            board[row][0] = 0
+        if decision[-1] == 'CShort':
+            board[row][col - 1] = Rook(row,col - 1, piece.color)
+            board[row][7] = 0
         board[row][col] = piece
+        board[rowOld][colOld] = 0
         if dumBoard == None:
             piece.row = row
             piece.col = col
             if piece.isPawn: 
                 piece.canMoveTwo = False
+                if abs(row - rowOld) == 2: 
+                    if row - 1 >= 0 and col + 1 <= 7 and row + 1 <= 7:
+                        pPawn = board[row][col + 1]
+                        if pPawn != 0:
+                            if pPawn.isPawn and pPawn.color != piece.color:
+                                if pPawn.color == 'black':
+                                    pPawn.canEnPassant = [True,[row + 1,col]]
+                                if pPawn.color == 'white':
+                                    pPawn.canEnPassant = [True,[row -1,col]]
+                    if row + 1 <= 7 and col - 1 >= 0 and row - 1 >= 0:
+                        pPawn = board[row][col - 1]
+                        if pPawn != 0:
+                            if pPawn.isPawn and pPawn.color != piece.color:
+                                if pPawn.color == 'black':
+                                    pPawn.canEnPassant = [True,[row + 1,col]]
+                                if pPawn.color == 'white':
+                                    pPawn.canEnPassant = [True,[row -1,col]]
+                if piece.canEnPassant[0]:
+                    if piece.color == "white":
+                        if board[piece.row + 1][piece.col] !=0 and board[piece.row + 1][piece.col].color != piece.color:
+                            board[piece.row + 1][piece.col] = 0
+                    else:
+                        if board[piece.row - 1][piece.col] !=0 and board[piece.row - 1][piece.col].color != piece.color:
+                            board[piece.row - 1][piece.col] = 0       
+            if piece.isKing or piece.isRook: 
+                piece.canCastle = False
         
     def getBoard(self):
         ###Get the Board for Dummy Purposes###
@@ -111,30 +144,5 @@ class Board():
                                     (piece.col*self.spaceSize,piece.row*self.spaceSize)
                                     )
     
-    def isKingChecked(self,king,dumBoard = None,s = None): 
-        if dumBoard is not None:
-            board = dumBoard
-        else:
-            board = self.board
-        if s is None:
-            s = [king.row,king.col]
-        if king.color == 'white':
-            for row in board:
-                for piece in row:
-                    if piece != 0:
-                        if piece.color == 'black':
-                            for space in piece.getSpaces(board):
-                                if space[0] == s[0] and space[1] == s[1]:
-                                    return True
-        else:
-            for row in board:
-                for piece in row:
-                    if piece != 0:
-                        if piece.color == 'white':
-                            for space in piece.getSpaces(board):
-                                for space in piece.getSpaces(board):
-                                    if space[0] == s[0] and space[1] == s[1]:
-                                        return True
-        return False
                 
         
