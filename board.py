@@ -125,7 +125,9 @@ class Board():
                             board[piece.row + 1][piece.col] = 0
                     else:
                         if board[piece.row - 1][piece.col] !=0 and board[piece.row - 1][piece.col].color != piece.color:
-                            board[piece.row - 1][piece.col] = 0       
+                            board[piece.row - 1][piece.col] = 0      
+                if piece.row == 0 or piece.row == 7:
+                    piece.promote(board,self.window) 
             if piece.isKing or piece.isRook: 
                 piece.canCastle = False
         
