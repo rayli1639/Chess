@@ -182,6 +182,7 @@ class Piece():
         self.isPawn = False
         self.isKing = False
         self.isRook = False
+        self.spaceSize = 50
     
     def checkPossibleSpaces(self,possibleSpaces,board,col):
         finalList = []
@@ -268,6 +269,64 @@ class Pawn(Piece):
         if self.canEnPassant[0]:
             possibleSpaces.append(self.canEnPassant[1])
         return possibleSpaces
+    
+    def showMenu(self,window,color):
+        if color == 'white':
+            iQueen = pygame.image.load('sprites/whiteQueen.png')
+            iRook = pygame.image.load('sprites/whiteRook.png')
+            iBishop = pygame.image.load('sprites/whiteBishop.png')
+            iKnight = pygame.image.load('sprites/whiteKnight.png')
+            pygame.draw.rect(window,(255,255,255),(self.col*self.spaceSize,
+                                             self.row*self.spaceSize,
+                                             self.spaceSize,
+                                             self.spaceSize*4))
+            window.blit(iQueen,(self.col*self.spaceSize,self.row*self.spaceSize))
+            window.blit(iRook,(self.col*self.spaceSize,(self.row + 1)*self.spaceSize))
+            window.blit(iBishop,(self.col*self.spaceSize,(self.row + 2)*self.spaceSize))
+            window.blit(iKnight,(self.col*self.spaceSize,(self.row + 3)*self.spaceSize))
+            pygame.display.update()
+            return {(self.row,self.col):Queen(self.row,self.col,color),
+                    (self.row + 1,self.col):Rook(self.row,self.col,color),
+                    (self.row + 2,self.col):Bishop(self.row,self.col,color),
+                    (self.row + 3,self.col):Knight(self.row,self.col,color)
+                    }
+        else:
+            iQueen = pygame.image.load('sprites/blackQueen.png')
+            iRook = pygame.image.load('sprites/blackRook.png')
+            iBishop = pygame.image.load('sprites/blackBishop.png')
+            iKnight = pygame.image.load('sprites/blackKnight.png')
+            pygame.draw.rect(window,(255,255,255),(self.col*self.spaceSize,
+                                             self.row*self.spaceSize,
+                                             self.spaceSize,
+                                             self.spaceSize*4))
+            window.blit(iQueen,(self.col*self.spaceSize,self.row*self.spaceSize))
+            window.blit(iRook,(self.col*self.spaceSize,(self.row - 1)*self.spaceSize))
+            window.blit(iBishop,(self.col*self.spaceSize,(self.row - 2)*self.spaceSize))
+            window.blit(iKnight,(self.col*self.spaceSize,(self.row - 3)*self.spaceSize))
+            pygame.display.update()
+            return {(self.row,self.col):Queen(self.row,self.col,color),
+                    (self.row - 1,self.col):Rook(self.row,self.col,color),
+                    (self.row - 2,self.col):Bishop(self.row,self.col,color),
+                    (self.row - 3,self.col):Knight(self.row,self.col,color)
+                    }
+            
+    def promote(self,board,window):
+        running = True
+        while running:
+            choices = self.showMenu(window,self.color)
+            for event in pygame.event.get():
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    coords = [x // self.spaceSize for x in pygame.mouse.get_pos()]
+                    coords.reverse()
+                    coords = tuple(coords)
+                    print(choices)
+                    print(coords)
+                    if coords in choices:
+                        board[self.row][self.col] = choices[coords]
+                        running = False
+                    
+                    
+                        
             
 
 class Knight(Piece):
@@ -386,23 +445,24 @@ class King(Piece):
     
     def attemptCastle(self,board):
         finalList = []
-        if board.board[self.row][0].isRook and board.board[self.row][0].canCastle:
-            if board.board[self.row][self.col - 1] == 0 and board.board[self.row][self.col -2] == 0:
-                p = self.checkPossibleSpaces([[self.row,self.col - 1],[self.row,self.col - 2]],
-                                              board,
-                                              self.color
-                                            )
-                if len(p) == 2:
-                    finalList.append([self.row,self.col - 2,'CLong'])
-                    
-        if board.board[self.row][7].isRook and board.board[self.row][7].canCastle:
-            if board.board[self.row][self.col + 1] == 0 and board.board[self.row][self.col + 2] == 0:
-                p = self.checkPossibleSpaces([[self.row,self.col + 1],[self.row,self.col + 2]],
-                                              board,
-                                              self.color
-                                            )
-                if len(p) == 2:
-                    finalList.append([self.row,self.col + 2,'CShort'])
+        if board.board[self.row][0] != 0:
+            if board.board[self.row][0].isRook and board.board[self.row][0].canCastle:
+                if board.board[self.row][self.col - 1] == 0 and board.board[self.row][self.col -2] == 0:
+                    p = self.checkPossibleSpaces([[self.row,self.col - 1],[self.row,self.col - 2]],
+                                                  board,
+                                                  self.color
+                                                )
+                    if len(p) == 2:
+                        finalList.append([self.row,self.col - 2,'CLong'])
+        if board.board[self.row][7] != 0:            
+                if board.board[self.row][7].isRook and board.board[self.row][7].canCastle:
+                    if board.board[self.row][self.col + 1] == 0 and board.board[self.row][self.col + 2] == 0:
+                        p = self.checkPossibleSpaces([[self.row,self.col + 1],[self.row,self.col + 2]],
+                                                      board,
+                                                      self.color
+                                                    )
+                        if len(p) == 2:
+                            finalList.append([self.row,self.col + 2,'CShort'])
         return finalList
         
 
