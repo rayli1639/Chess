@@ -25,10 +25,7 @@ class GameChess():
         self.oppoCol = 'black'
         self.whiteChecked = False
         self.blackChecked = False
-    
-    def checkIfRelieve(self,move):
-        if move:
-            return True
+        self.possibleStalemate = False
     
     def resetBoard(self):
         self.pieceSelected = 0
@@ -63,6 +60,8 @@ class GameChess():
         for event in pygame.event.get(): #Loop to check for user exit
             if event.type == pygame.QUIT:
                 self.running = False
+            if event.type == pygame.KEYDOWN:
+                print(self.board.positions)
             if event.type == pygame.MOUSEBUTTONDOWN:
                 coords = [x // self.board.spaceSize for x in pygame.mouse.get_pos()]
                 coords.reverse()
@@ -77,10 +76,8 @@ class GameChess():
                     if (clickedSpace == 0 or clickedSpace == self.pieceSelected or 
                         clickedSpace.color == self.oppoCol):
                         for space in self.possibleSpaces:
-                            print(space)
-                            print(coords)
                             if coords[0] == space[0] and coords[1] == space[1]:
-                                self.board.move(self.pieceSelected,space)
+                                self.possibleStalemate = self.board.move(self.pieceSelected,space)
                                 self.turn += 1
                         self.resetBoard()
                     else:
@@ -115,7 +112,16 @@ class GameChess():
                             if piece.isPawn and piece.color != self.turnCol:
                                 piece.canEnPassant = [False,[0,0]]
             if self.isMated():
-                print(f'{self.oppoCol} has won. {self.turnCol} was checkmated.')
+                if self.blackChecked:  
+                    print('white has won. black was checkmated.')
+                elif self.whiteChecked:
+                    print('black has won. white was checkmated')
+                else:
+                    print('The match ended in a stalemate')
+                self.running = False
+                break
+            if self.possibleStalemate:
+                print('The match ended in a stalemate')
                 self.running = False
                 break
         pygame.display.update()
