@@ -7,6 +7,7 @@ from pieces import Bishop,King,Queen,Pawn,Knight,Rook
 import pygame
 
 def setPawns(board):
+    
     i = 1
     j = 0
     while j < len(board):
@@ -19,6 +20,7 @@ def setPawns(board):
         j += 1
 
 def setPieces(board,p1,p2):
+    
     for piece in p1: 
         board[0].append(piece)
     for piece in p2:
@@ -54,8 +56,10 @@ class Board():
             [],
             [] 
             ]
+        
         setPawns(self.board)
         setPieces(self.board,self.blackPieces,self.whitePieces)
+        
         dBoard = [x[:] for x in self.board]
         self.positions = [[dBoard,0]]
         
@@ -85,28 +89,36 @@ class Board():
         ###Move the piece using a valid decision.###
         takes = False
         changed = False
+        
         if dumBoard != None:
             board = dumBoard
         else:
             board = self.board
+            
         row = decision[0]
         col = decision[1]
         rowOld = piece.row
         colOld = piece.col
+        
         if board[row][col] != 0:
             takes = True
+            
         if decision[-1] == 'CLong':
             board[row][col + 1] = Rook(row,col + 1, piece.color)
             board[row][0] = 0
         if decision[-1] == 'CShort':
             board[row][col - 1] = Rook(row,col - 1, piece.color)
             board[row][7] = 0
+            
         board[row][col] = piece
         board[rowOld][colOld] = 0
+        
         if dumBoard == None:
             piece.row = row
             piece.col = col
+            
             dBoard = [x[:] for x in board]
+            
             for b in self.positions:
                 if dBoard == b[0]:
                     b[1] += 1
@@ -115,25 +127,31 @@ class Board():
                         return True
                     break
                 changed = False
+                
             if not changed:
                 dBoard = [x[:] for x in board]
                 self.positions.append([dBoard,0])
             if takes:
                 dBoard = [x[:] for x in board]
                 self.positions = [[dBoard,0]]
+                
             if piece.isPawn: 
                 dBoard = [x[:] for x in board]
                 self.positions = [[dBoard,0]]
                 piece.canMoveTwo = False
+                
                 if abs(row - rowOld) == 2: 
+                    
                     if row - 1 >= 0 and col + 1 <= 7 and row + 1 <= 7:
                         pPawn = board[row][col + 1]
                         if pPawn != 0:
                             if pPawn.isPawn and pPawn.color != piece.color:
+                                
                                 if pPawn.color == 'black':
                                     pPawn.canEnPassant = [True,[row + 1,col]]
                                 if pPawn.color == 'white':
                                     pPawn.canEnPassant = [True,[row -1,col]]
+                                    
                     if row + 1 <= 7 and col - 1 >= 0 and row - 1 >= 0:
                         pPawn = board[row][col - 1]
                         if pPawn != 0:
@@ -142,17 +160,23 @@ class Board():
                                     pPawn.canEnPassant = [True,[row + 1,col]]
                                 if pPawn.color == 'white':
                                     pPawn.canEnPassant = [True,[row -1,col]]
+                                    
                 if piece.canEnPassant[0]:
+                    
                     if piece.color == "white":
                         if board[piece.row + 1][piece.col] !=0 and board[piece.row + 1][piece.col].color != piece.color:
                             board[piece.row + 1][piece.col] = 0
+                            
                     else:
                         if board[piece.row - 1][piece.col] !=0 and board[piece.row - 1][piece.col].color != piece.color:
-                            board[piece.row - 1][piece.col] = 0      
+                            board[piece.row - 1][piece.col] = 0   
+                               
                 if piece.row == 0 or piece.row == 7:
                     piece.promote(board,self.window) 
+                    
             if piece.isKing or piece.isRook: 
                 piece.canCastle = False
+                
     def drawPieces(self):
         ###Draw the pieces onto the board###
 
@@ -162,6 +186,4 @@ class Board():
                     self.window.blit(piece.image,
                                     (piece.col*self.spaceSize,piece.row*self.spaceSize)
                                     )
-    
-                
-        
+                    
