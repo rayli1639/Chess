@@ -155,6 +155,7 @@ class Board():
                     if row + 1 <= 7 and col - 1 >= 0 and row - 1 >= 0:
                         pPawn = board[row][col - 1]
                         if pPawn != 0:
+                            
                             if pPawn.isPawn and pPawn.color != piece.color:
                                 if pPawn.color == 'black':
                                     pPawn.canEnPassant = [True,[row + 1,col]]
