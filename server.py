@@ -37,7 +37,7 @@ def threaded_client(conn):
                 print('Received: ' + reply) ## Received Data
                 print('Sending: ' + reply)
             
-            conn.sendall(str.encode(reply))
+            conn.sendall(str.encode(reply)) #Send Reply
         except: 
             break
         

@@ -62,6 +62,7 @@ class Board():
         
         dBoard = [x[:] for x in self.board]
         self.positions = [[dBoard,0]]
+        self.stalemate = False
         
     def drawBoard(self):
         ###Draw Board###
@@ -114,6 +115,7 @@ class Board():
         board[rowOld][colOld] = 0
         
         if dumBoard == None:
+            
             piece.row = row
             piece.col = col
             
@@ -124,7 +126,7 @@ class Board():
                     b[1] += 1
                     changed = True
                     if b[1] == 2:
-                        return True
+                        self.stalemate = True
                     break
                 changed = False
                 
@@ -136,6 +138,7 @@ class Board():
                 self.positions = [[dBoard,0]]
                 
             if piece.isPawn: 
+                
                 dBoard = [x[:] for x in board]
                 self.positions = [[dBoard,0]]
                 piece.canMoveTwo = False
@@ -177,6 +180,7 @@ class Board():
                     
             if piece.isKing or piece.isRook: 
                 piece.canCastle = False
+            return [[colOld,rowOld],[col,row]]
                 
     def drawPieces(self):
         ###Draw the pieces onto the board###

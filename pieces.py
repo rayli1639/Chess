@@ -21,7 +21,6 @@ def isKingChecked(king,board,dumBoard,s):
                             if piece.color == 'black':
                                 for space in piece.getSpaces(board,True):
                                     if space[0] == s[0] and space[1] == s[1]:
-                                        print("Check was checked for")
                                         
                                         return True
             else:
@@ -32,7 +31,6 @@ def isKingChecked(king,board,dumBoard,s):
                             if piece.color == 'white':
                                 for space in piece.getSpaces(board,True):
                                     if space[0] == s[0] and space[1] == s[1]:
-                                        print("Check was checked for")
                                         
                                         return True
                                     
@@ -52,7 +50,6 @@ def isKingChecked(king,board,dumBoard,s):
                                 for space in piece.getSpaces(board):
                                     if space[0] == s[0] and space[1] == s[1]:
                                         return True
-                                        print("king in check")
             else:
                 
                 for row in board.board:
@@ -62,7 +59,6 @@ def isKingChecked(king,board,dumBoard,s):
                                 for space in piece.getSpaces(board):
                                     if space[0] == s[0] and space[1] == s[1]:
                                         return True
-                                        print("king in Check")
                                         
             return False
 
@@ -230,15 +226,18 @@ class Piece():
     
     def drawPossibleSpaces(self,possibleSpaces,board,window):
         
+        radius = 8
         currentPosCol = self.col*board.spaceSize
         currentPosRow = self.row*board.spaceSize
-        pygame.draw.rect(window,(0,255,0),(currentPosCol,currentPosRow,
+        pygame.draw.rect(window,(25,180,25),(currentPosCol,currentPosRow,
                             board.spaceSize,board.spaceSize))
         window.blit(self.image,(currentPosCol,currentPosRow))
         
         for space in possibleSpaces:
-            pygame.draw.rect(window,(0,255,0),(space[1]*board.spaceSize,space[0]*board.spaceSize,
-                                board.spaceSize,board.spaceSize))
+            pygame.draw.circle(window,(25,180,25),
+                               (space[1]*board.spaceSize + board.spaceSize//2,
+                                space[0]*board.spaceSize + board.spaceSize//2),
+                                radius)
 
 class Pawn(Piece):
     

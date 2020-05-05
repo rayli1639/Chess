@@ -28,12 +28,20 @@ class GameChess():
         self.blackChecked = False
         self.possibleStalemate = False
     
-    def resetBoard(self):
+    def resetBoard(self,drawCoords = None):
         
         self.pieceSelected = 0
         self.possibleSpaces = []
         self.isSelected = False
         self.board.drawBoard()
+        if drawCoords != None:
+            pygame.draw.rect(self.window,(25,235,25),
+                             (drawCoords[0][0]*self.board.spaceSize,drawCoords[0][1]*self.board.spaceSize,
+                              self.board.spaceSize,self.board.spaceSize))
+            pygame.draw.rect(self.window,(25,235,25),
+                             (drawCoords[1][0]*self.board.spaceSize,drawCoords[1][1]*self.board.spaceSize,
+                              self.board.spaceSize,self.board.spaceSize))
+        
         self.board.drawPieces()
     
     def pieceAction(self):
@@ -69,10 +77,7 @@ class GameChess():
             
             if event.type == pygame.QUIT:
                 self.running = False
-                
-            if event.type == pygame.KEYDOWN:
-                print(self.board.positions)
-                
+         
             if event.type == pygame.MOUSEBUTTONDOWN:
                 coords = [x // self.board.spaceSize for x in pygame.mouse.get_pos()]
                 coords.reverse()
@@ -94,10 +99,14 @@ class GameChess():
                         
                         for space in self.possibleSpaces:
                             if coords[0] == space[0] and coords[1] == space[1]:
-                                self.possibleStalemate = self.board.move(self.pieceSelected,space)
+                                drawCoords = self.board.move(self.pieceSelected,space)
+                                self.possibleStalemate = self.board.stalemate
                                 self.turn += 1
                                 
-                        self.resetBoard()
+                        try:        
+                            self.resetBoard(drawCoords)
+                        except:
+                            self.resetBoard()
                         
                     else:
                         
