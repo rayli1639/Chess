@@ -11,6 +11,6 @@ window_y = 400
 window = pygame.display.set_mode((window_x,window_y)) #Create window
 game = GameChess(window)
 while game.running:
-    game.play()       
-
+    game.play()     
+ 
             

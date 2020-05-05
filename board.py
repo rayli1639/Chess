@@ -5,6 +5,7 @@ Created on Apr 24, 2020
 '''
 from pieces import Bishop,King,Queen,Pawn,Knight,Rook
 import pygame
+from pieceSprites import pieceSprites
 
 def setPawns(board):
     
@@ -28,8 +29,7 @@ def setPieces(board,p1,p2):
         
 class Board():
     
-    def __init__(self,window):
-        self.window = window
+    def __init__(self):
         self.spaceSize = 50
         self.blackRow = 0
         self.whiteRow = 7
@@ -63,8 +63,8 @@ class Board():
         dBoard = [x[:] for x in self.board]
         self.positions = [[dBoard,0]]
         self.stalemate = False
-        
-    def drawBoard(self):
+    
+    def drawBoard(self,window):
         ###Draw Board###
         
         for row in range(len(self.board)):
@@ -74,19 +74,19 @@ class Board():
                 c = 1
             for col in range(len(self.board)):
                 if c == 0:
-                    pygame.draw.rect(self.window,
+                    pygame.draw.rect(window,
                                     (232,235,239),
                                     (col*self.spaceSize,row*self.spaceSize,
                                      self.spaceSize,self.spaceSize))
                     c = 1
                 else:
-                    pygame.draw.rect(self.window,
+                    pygame.draw.rect(window,
                                     (125,135,150),
                                     (col*self.spaceSize,row*self.spaceSize,
                                      self.spaceSize,self.spaceSize))
                     c = 0
     
-    def move(self,piece,decision,dumBoard = None):
+    def move(self,piece,decision,window,dumBoard = None):
         ###Move the piece using a valid decision.###
         takes = False
         changed = False
@@ -176,19 +176,19 @@ class Board():
                             board[piece.row - 1][piece.col] = 0   
                                
                 if piece.row == 0 or piece.row == 7:
-                    piece.promote(board,self.window) 
+                    piece.promote(board,window) 
                     
             if piece.isKing or piece.isRook: 
                 piece.canCastle = False
             return [[colOld,rowOld],[col,row]]
                 
-    def drawPieces(self):
+    def drawPieces(self,window):
         ###Draw the pieces onto the board###
 
         for row in self.board:
             for piece in row:
                 if piece != 0:
-                    self.window.blit(piece.image,
+                    window.blit(pieceSprites[piece.image],
                                     (piece.col*self.spaceSize,piece.row*self.spaceSize)
                                     )
                     

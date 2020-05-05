@@ -6,6 +6,10 @@ Created on Apr 27, 2020
 import pygame
 from board import Board
 from pieces import isKingChecked
+from network import Network
+
+n = Network()
+n.connect()
 
 class GameChess():
     
@@ -15,9 +19,9 @@ class GameChess():
         self.running = True
         self.clock = pygame.time.Clock()
         self.fps = 30
-        self.board = Board(self.window)
-        self.board.drawBoard()
-        self.board.drawPieces()
+        self.board = Board()
+        self.board.drawBoard(self.window)
+        self.board.drawPieces(self.window)
         self.possibleSpaces = []
         self.isSelected = False
         self.pieceSelected = 0
@@ -34,7 +38,7 @@ class GameChess():
         self.pieceSelected = 0
         self.possibleSpaces = []
         self.isSelected = False
-        self.board.drawBoard()
+        self.board.drawBoard(self.window)
         if self.drawCoords != None:
             pygame.draw.rect(self.window,(100,235,25),
                              (self.drawCoords[0][0]*self.board.spaceSize,self.drawCoords[0][1]*self.board.spaceSize,
@@ -43,7 +47,7 @@ class GameChess():
                              (self.drawCoords[1][0]*self.board.spaceSize,self.drawCoords[1][1]*self.board.spaceSize,
                               self.board.spaceSize,self.board.spaceSize))
         
-        self.board.drawPieces()
+        self.board.drawPieces(self.window)
     
     def pieceAction(self):
         
@@ -68,8 +72,7 @@ class GameChess():
                             return False
                         
         return True
-        
-        
+    
     def play(self):
         
         self.clock.tick(self.fps) #Update the clock by the fps every frame
@@ -85,6 +88,7 @@ class GameChess():
                 clickedSpace = self.board.board[coords[0]][coords[1]]
                 
                 if not self.isSelected:
+                ##When the player chooses a piece when another piece is not selected
                     
                     if clickedSpace != 0 and clickedSpace.color == self.turnCol:
                         self.pieceSelected = clickedSpace
@@ -100,17 +104,17 @@ class GameChess():
                         
                         for space in self.possibleSpaces:
                             if coords[0] == space[0] and coords[1] == space[1]:
-                                self.drawCoords = self.board.move(self.pieceSelected,space)
+                                self.drawCoords = self.board.move(self.pieceSelected,space,self.window)
                                 self.possibleStalemate = self.board.stalemate
                                 self.turn += 1
-                                     
+                                n.send(self.board.board)
                         self.resetBoard()
 
                         
                     else:
                         
-                        self.board.drawBoard()
-                        self.board.drawPieces()
+                        self.board.drawBoard(self.window)
+                        self.board.drawPieces(self.window)
                         
                         if clickedSpace.color == self.turnCol:
                             self.pieceSelected = self.board.board[coords[0]][coords[1]]

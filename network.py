@@ -3,8 +3,10 @@ Created on May 4, 2020
 
 @author: RayL
 '''
+from pieces import Pawn
 
 import socket
+import pickle
 
 class Network():
     
@@ -21,13 +23,20 @@ class Network():
     def connect(self):
         try:
             self.client.connect(self.addr)
-            return self.client.recv(2048).decode()
+            return pickle.loads(self.client.recv(2048*8))
         except:
             pass
     
     def send(self,data):
+        """
+        :param data: board
+        :param return: board
+        """
+        
         try:
-            self.client.send(str.encode(data)) ##Encode Data
-            return self.client.recv(2048).decode() ##Decode and receive data
+            self.client.send(pickle.dumps(data))
+            return pickle.loads(self.client.recv(2048*8)) ##Decode and receive data
         except socket.error as e:
             print(e)
+
+

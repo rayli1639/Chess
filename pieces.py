@@ -4,7 +4,7 @@ Created on Apr 24, 2020
 @author: RayL
 '''
 import pygame
-
+from pieceSprites import pieceSprites
 
 def isKingChecked(king,board,dumBoard,s): 
         if dumBoard is not None:
@@ -214,7 +214,7 @@ class Piece():
         
         for space in possibleSpaces:
             dumBoard = [x[:] for x in board.board]
-            board.move(Pawn(self.row,self.col,self.color),[space[0],space[1]],dumBoard)
+            board.move(Pawn(self.row,self.col,self.color),[space[0],space[1]],None,dumBoard)
             if col == 'white':
                 if not isKingChecked(board.whiteKing,None,dumBoard,None):
                     finalList.append(space)
@@ -225,14 +225,14 @@ class Piece():
         return finalList
     
     def drawPossibleSpaces(self,possibleSpaces,board,window):
-        
+         
         radius = 8
         currentPosCol = self.col*board.spaceSize
         currentPosRow = self.row*board.spaceSize
         pygame.draw.rect(window,(25,180,25),(currentPosCol,currentPosRow,
                             board.spaceSize,board.spaceSize))
-        window.blit(self.image,(currentPosCol,currentPosRow))
-        
+        window.blit(pieceSprites[self.image],(currentPosCol,currentPosRow))
+         
         for space in possibleSpaces:
             pygame.draw.circle(window,(25,180,25),
                                (space[1]*board.spaceSize + board.spaceSize//2,
@@ -244,9 +244,9 @@ class Pawn(Piece):
     def __init__(self,row,col,color):
         Piece.__init__(self,row,col,color)
         if self.color == 'black':
-            self.image = pygame.image.load('sprites/blackPawn.png')
+            self.image = 'blackPawn'
         else:
-            self.image = pygame.image.load('sprites/whitePawn.png')
+            self.image = 'whitePawn'
         self.canMoveTwo = True
         self.isPawn = True
         self.canEnPassant = [False,[0,0]]
@@ -314,7 +314,7 @@ class Pawn(Piece):
     
     def showMenu(self,window,color):
         if color == 'white':
-            
+             
             iQueen = pygame.image.load('sprites/whiteQueen.png')
             iRook = pygame.image.load('sprites/whiteRook.png')
             iBishop = pygame.image.load('sprites/whiteBishop.png')
@@ -328,14 +328,14 @@ class Pawn(Piece):
             window.blit(iBishop,(self.col*self.spaceSize,(self.row + 2)*self.spaceSize))
             window.blit(iKnight,(self.col*self.spaceSize,(self.row + 3)*self.spaceSize))
             pygame.display.update()
-            
+             
             return {(self.row,self.col):Queen(self.row,self.col,color),
                     (self.row + 1,self.col):Rook(self.row,self.col,color),
                     (self.row + 2,self.col):Bishop(self.row,self.col,color),
                     (self.row + 3,self.col):Knight(self.row,self.col,color)
                     }
         else:
-            
+             
             iQueen = pygame.image.load('sprites/blackQueen.png')
             iRook = pygame.image.load('sprites/blackRook.png')
             iBishop = pygame.image.load('sprites/blackBishop.png')
@@ -349,20 +349,20 @@ class Pawn(Piece):
             window.blit(iBishop,(self.col*self.spaceSize,(self.row - 2)*self.spaceSize))
             window.blit(iKnight,(self.col*self.spaceSize,(self.row - 3)*self.spaceSize))
             pygame.display.update()
-            
+             
             return {(self.row,self.col):Queen(self.row,self.col,color),
                     (self.row - 1,self.col):Rook(self.row,self.col,color),
                     (self.row - 2,self.col):Bishop(self.row,self.col,color),
                     (self.row - 3,self.col):Knight(self.row,self.col,color)
                     }
-            
+             
     def promote(self,board,window):
-        
+         
         running = True
         while running:
-            
+             
             choices = self.showMenu(window,self.color)
-            
+             
             for event in pygame.event.get():
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     coords = [x // self.spaceSize for x in pygame.mouse.get_pos()]
@@ -371,8 +371,8 @@ class Pawn(Piece):
                     if coords in choices:
                         board[self.row][self.col] = choices[coords]
                         running = False
-                    
-                    
+                     
+                     
                         
             
 
@@ -381,9 +381,9 @@ class Knight(Piece):
     def __init__(self,row,col,color):
         Piece.__init__(self, row, col, color)
         if self.color == 'black':
-            self.image = pygame.image.load('sprites/blackKnight.png')
+            self.image = 'blackKnight'
         else:
-            self.image = pygame.image.load('sprites/whiteKnight.png')
+            self.image = 'whiteKnight'
     
     def getSpaces(self,board,fake = False):
         if fake:
@@ -420,9 +420,9 @@ class Bishop(Piece):
     def __init__(self,row,col,color):
         Piece.__init__(self, row, col, color)
         if self.color == 'black':
-            self.image = pygame.image.load('sprites/blackBishop.png')
+            self.image = 'blackBishop'
         else:
-            self.image = pygame.image.load('sprites/whiteBishop.png')
+            self.image = 'whiteBishop'
         
     def getSpaces(self,board,fake = False):
         if fake:
@@ -440,9 +440,9 @@ class Rook(Piece):
     def __init__(self,row,col,color):
         Piece.__init__(self, row, col, color)
         if self.color == 'black':
-            self.image = pygame.image.load('sprites/blackRook.png')
+            self.image = 'blackRook'
         else:
-            self.image = pygame.image.load('sprites/whiteRook.png')
+            self.image = 'whiteRook'
         self.isRook = True
         self.canCastle = True
 
@@ -461,9 +461,9 @@ class Queen(Piece):
     def __init__(self,row,col,color):
         Piece.__init__(self, row, col, color)
         if self.color == 'black':
-            self.image = pygame.image.load('sprites/blackQueen.png')
+            self.image = 'blackQueen'
         else:
-            self.image = pygame.image.load('sprites/whiteQueen.png')
+            self.image = 'whiteQueen'
             
     def getSpaces(self,board,fake = False):
         if fake: 
@@ -482,10 +482,10 @@ class King(Piece):
     def __init__(self,row,col,color):
         Piece.__init__(self, row, col, color)
         if self.color == 'black':
-            self.image = pygame.image.load('sprites/blackKing.png')
+            self.image = 'blackKing'
 
         else:
-            self.image = pygame.image.load('sprites/whiteKing.png')
+            self.image = 'whiteKing'
             
         self.isKing = True
         self.canCastle = True
@@ -499,7 +499,7 @@ class King(Piece):
             dumKing = King(self.row,self.col,col)
             dumKing.canCastle = False
             dumBoard[self.row][self.col] = dumKing
-            board.move(dumKing,[space[0],space[1]],dumBoard)
+            board.move(dumKing,[space[0],space[1]],None,dumBoard)
             
             if not isKingChecked(dumKing,None,dumBoard,[space[0],space[1]]):
                 finalList.append(space)
