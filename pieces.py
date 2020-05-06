@@ -508,15 +508,20 @@ class King(Piece):
     
     def attemptCastle(self,board):
         finalList = []
+        
         if board.board[self.row][0] != 0:
             if board.board[self.row][0].isRook and board.board[self.row][0].canCastle:
-                if board.board[self.row][self.col - 1] == 0 and board.board[self.row][self.col -2] == 0:
+                if (board.board[self.row][self.col - 1] == 0 and 
+                    board.board[self.row][self.col -2] == 0 and
+                    board.board[self.row][self.col - 3] == 0):
                     
-                    p = self.checkPossibleSpaces([[self.row,self.col - 1],[self.row,self.col - 2]],
+                    p = self.checkPossibleSpaces([[self.row,self.col - 1],
+                                                  [self.row,self.col - 2],
+                                                  [self.row,self.col - 3]],
                                                   board,
                                                   self.color
                                                 )
-                    if len(p) == 2:
+                    if len(p) == 3:
                         finalList.append([self.row,self.col - 2,'CLong'])
                         
         if board.board[self.row][7] != 0:            

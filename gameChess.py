@@ -8,8 +8,6 @@ from board import Board
 from pieces import isKingChecked
 from network import Network
 
-n = Network()
-n.connect()
 
 class GameChess():
     
@@ -32,6 +30,8 @@ class GameChess():
         self.blackChecked = False
         self.possibleStalemate = False
         self.drawCoords = None
+        self.n = Network()
+        self.n.connect()
     
     def resetBoard(self):
         
@@ -107,7 +107,7 @@ class GameChess():
                                 self.drawCoords = self.board.move(self.pieceSelected,space,self.window)
                                 self.possibleStalemate = self.board.stalemate
                                 self.turn += 1
-                                n.send(self.board.board)
+                                self.n.send(self.board.board)
                         self.resetBoard()
 
                         

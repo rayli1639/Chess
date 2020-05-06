@@ -19,11 +19,16 @@ except socket.error as e:
     str(e)
     
 board = []
+boardCreated = False
 
 s.listen(2)
 print("waiting for Connection")
 
-def threaded_client(conn,board):
+p1 = 'white'
+p2 = 'black'
+
+def threaded_client(conn,board,p):
+    global p1,p2
     
     conn.send(pickle.dumps(board))
     reply = 'hello'
@@ -54,6 +59,9 @@ idCount = 0
 while True:
     conn,addr = s.accept()
     print('Connection to:', addr)
-    if idCount < 2:
-        start_new_thread(threaded_client,(conn,board))
-    idCount += 1
+    if idCount == 0:
+        start_new_thread(threaded_client,(conn,board,p1))
+        idCount += 1
+    elif idCount == 1:
+        start_new_thread(threaded_client(conn, board, p2))
+    
