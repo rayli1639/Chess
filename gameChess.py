@@ -23,15 +23,23 @@ class GameChess():
         self.possibleSpaces = []
         self.isSelected = False
         self.pieceSelected = 0
-        self.turn = 1
-        self.turnCol = 'white'
-        self.oppoCol = 'black'
         self.whiteChecked = False
         self.blackChecked = False
         self.possibleStalemate = False
         self.drawCoords = None
         self.n = Network()
-        self.n.connect()
+        self.color = self.n.getColor()
+        self.board.board = self.n.send('Receiving Data')[0]
+        if self.color == 'white':
+            self.isTurn = True
+            self.turnCol = 'white'
+            self.oppoCol = 'black'
+            self.turn = 1
+        else:
+            self.isTurn = False
+            self.turnCol = 'black'
+            self.oppoCol = 'white'
+            self.turn = 2
     
     def resetBoard(self):
         
@@ -77,96 +85,105 @@ class GameChess():
         
         self.clock.tick(self.fps) #Update the clock by the fps every frame
         
-        for event in pygame.event.get(): #Loop to check for user exit
-            
-            if event.type == pygame.QUIT:
-                self.running = False
-         
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                coords = [x // self.board.spaceSize for x in pygame.mouse.get_pos()]
-                coords.reverse()
-                clickedSpace = self.board.board[coords[0]][coords[1]]
-                
-                if not self.isSelected:
-                ##When the player chooses a piece when another piece is not selected
-                    
-                    if clickedSpace != 0 and clickedSpace.color == self.turnCol:
-                        self.pieceSelected = clickedSpace
-                        if self.pieceSelected != 0:
-                            self.pieceAction()
-                            
-                        self.isSelected = True
-                        
-                elif self.isSelected:
-                    
-                    if (clickedSpace == 0 or clickedSpace == self.pieceSelected or 
-                        clickedSpace.color == self.oppoCol):
-                        
-                        for space in self.possibleSpaces:
-                            if coords[0] == space[0] and coords[1] == space[1]:
-                                self.drawCoords = self.board.move(self.pieceSelected,space,self.window)
-                                self.possibleStalemate = self.board.stalemate
-                                self.turn += 1
-                                self.n.send(self.board.board)
-                        self.resetBoard()
-
-                        
-                    else:
-                        
-                        self.board.drawBoard(self.window)
-                        self.board.drawPieces(self.window)
-                        
-                        if clickedSpace.color == self.turnCol:
-                            self.pieceSelected = self.board.board[coords[0]][coords[1]]
-                            self.pieceAction()
-                            self.isSelected = True 
-                            
-            if self.turn % 2 == 1:
-                
-                if isKingChecked(self.board.whiteKing,self.board,None,None):
-                    self.whiteChecked = True
-                else:
-                    self.whiteChecked = False
-                    
-                self.turnCol = 'white'
-                self.oppoCol = 'black'
-                
-                for row in self.board.board:
-                    for piece in row:
-                        if piece != 0:
-                            if piece.isPawn and piece.color != self.turnCol:
-                                piece.canEnPassant = [False,[0,0]]
-                                
-            else:
+        if self.isTurn is False:
+            dB = self.n.send('Receiving Data')
+            if self.color == dB[1]:
+                print('this ran')
+                self.board.board = dB[0]
+                self.resetBoard()
+                self.isTurn = True
         
-                if isKingChecked(self.board.blackKing,self.board,None,None):
-                    self.blackChecked = True
-                else:
-                    self.blackChecked = False
-                    
-                self.turnCol = 'black'
-                self.oppoCol = 'white'
+        else:
+            for event in pygame.event.get(): #Loop to check for user exit
                 
-                for row in self.board.board:
-                    for piece in row:
-                        if piece != 0:
-                            if piece.isPawn and piece.color != self.turnCol:
-                                piece.canEnPassant = [False,[0,0]]
+                if event.type == pygame.QUIT:
+                    self.running = False
+             
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    coords = [x // self.board.spaceSize for x in pygame.mouse.get_pos()]
+                    coords.reverse()
+                    clickedSpace = self.board.board[coords[0]][coords[1]]
+                    
+                    if not self.isSelected:
+                    ##When the player chooses a piece when another piece is not selected
+                        
+                        if clickedSpace != 0 and clickedSpace.color == self.turnCol:
+                            self.pieceSelected = clickedSpace
+                            if self.pieceSelected != 0:
+                                self.pieceAction()
                                 
-            if self.isMated():
-
-                if self.blackChecked:  
-                    print('white has won. black was checkmated.')
-                elif self.whiteChecked:
-                    print('black has won. white was checkmated')
+                            self.isSelected = True
+                            
+                    elif self.isSelected:
+                        
+                        if (clickedSpace == 0 or clickedSpace == self.pieceSelected or 
+                            clickedSpace.color == self.oppoCol):
+                            
+                            for space in self.possibleSpaces:
+                                if coords[0] == space[0] and coords[1] == space[1]:
+                                    self.drawCoords = self.board.move(self.pieceSelected,space,self.window)
+                                    self.possibleStalemate = self.board.stalemate
+                                    self.turn += 1
+                                    self.n.send(self.board.board)
+                                    self.isTurn = False
+                            self.resetBoard()
+                            
+                        else:
+                            
+                            self.board.drawBoard(self.window)
+                            self.board.drawPieces(self.window)
+                            
+                            if clickedSpace.color == self.turnCol:
+                                self.pieceSelected = self.board.board[coords[0]][coords[1]]
+                                self.pieceAction()
+                                self.isSelected = True 
+                                
+                if self.turn % 2 == 1:
+                    
+                    if isKingChecked(self.board.whiteKing,self.board,None,None):
+                        self.whiteChecked = True
+                    else:
+                        self.whiteChecked = False
+                        
+                    self.turnCol = 'white'
+                    self.oppoCol = 'black'
+                    
+                    for row in self.board.board:
+                        for piece in row:
+                            if piece != 0:
+                                if piece.isPawn and piece.color != self.turnCol:
+                                    piece.canEnPassant = [False,[0,0]]
+                                    
                 else:
-                    print('The match ended in a stalemate')
-                self.running = False
-                break
             
-            if self.possibleStalemate:
-                print('The match ended in a stalemate')
-                self.running = False
-                break
+                    if isKingChecked(self.board.blackKing,self.board,None,None):
+                        self.blackChecked = True
+                    else:
+                        self.blackChecked = False
+                        
+                    self.turnCol = 'black'
+                    self.oppoCol = 'white'
+                    
+                    for row in self.board.board:
+                        for piece in row:
+                            if piece != 0:
+                                if piece.isPawn and piece.color != self.turnCol:
+                                    piece.canEnPassant = [False,[0,0]]
+                                    
+                if self.isMated():
+        
+                    if self.blackChecked:  
+                        print('white has won. black was checkmated.')
+                    elif self.whiteChecked:
+                        print('black has won. white was checkmated')
+                    else:
+                        print('The match ended in a stalemate')
+                    self.running = False
+                    break
+                
+                if self.possibleStalemate:
+                    print('The match ended in a stalemate')
+                    self.running = False
+                    break
             
         pygame.display.update()

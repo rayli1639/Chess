@@ -3,7 +3,6 @@ Created on May 4, 2020
 
 @author: RayL
 '''
-from pieces import Pawn
 
 import socket
 import pickle
@@ -15,15 +14,15 @@ class Network():
         self.server = '192.168.1.187'
         self.port = 5555
         self.addr = (self.server,self.port)
-        self.pos = self.connect()
+        self.color = self.connect()
     
-    def getPos(self):
-        return self.pos
+    def getColor(self):
+        return self.color
         
     def connect(self):
         try:
             self.client.connect(self.addr)
-            return self.client.recv(2048*8).decode()
+            return self.client.recv(2048).decode() #Receive Color
         except:
             pass
     
