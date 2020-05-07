@@ -14,15 +14,16 @@ class Network():
         self.server = '192.168.1.187'
         self.port = 5555
         self.addr = (self.server,self.port)
-        self.color = self.connect()
+        self.info = self.connect()
     
-    def getColor(self):
-        return self.color
+    def getInfo(self):
+        return self.info
+    
         
     def connect(self):
         try:
             self.client.connect(self.addr)
-            return self.client.recv(2048).decode() #Receive Color
+            return pickle.loads(self.client.recv(2048)) #Receive Color
         except:
             pass
     

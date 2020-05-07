@@ -30,10 +30,13 @@ p2 = 'black'
 turn = 'white'
 
 def threaded_client(conn,p):
+    
     global board
+    global b
     global p1,p2
     global turn
-    conn.send(str.encode(p))
+    
+    conn.send(pickle.dumps([p,b.whiteKing,b.blackKing]))
     
     if p == p1:
         print('You are white')
