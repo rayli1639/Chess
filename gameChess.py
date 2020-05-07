@@ -86,6 +86,11 @@ class GameChess():
         self.clock.tick(self.fps) #Update the clock by the fps every frame
         
         if self.isTurn is False:
+            for event in pygame.event.get(): #Loop to check for user exit
+                
+                if event.type == pygame.QUIT:
+                    self.running = False
+                    
             dB = self.n.send('Receiving Data')
             if self.color == dB[1]:
                 print('this ran')
@@ -94,6 +99,7 @@ class GameChess():
                 self.isTurn = True
         
         else:
+            
             for event in pygame.event.get(): #Loop to check for user exit
                 
                 if event.type == pygame.QUIT:
