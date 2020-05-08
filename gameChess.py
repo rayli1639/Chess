@@ -32,7 +32,9 @@ class GameChess():
         self.color = info[0]
         self.board.whiteKing = info[1]
         self.board.blackKing = info[2]
-        self.board.board = self.n.send('Receiving Data')[0]
+        boardInfo = self.n.send('Receiving Data')
+        self.board.board = boardInfo[0]
+        self.board.positions = boardInfo[2]
         if self.color == 'white':
             self.isTurn = True
             self.turnCol = 'white'
@@ -41,6 +43,7 @@ class GameChess():
             self.isTurn = False
             self.turnCol = 'black'
             self.oppoCol = 'white'
+        
     
     def resetBoard(self):
         
@@ -96,13 +99,22 @@ class GameChess():
                         if possibleSpaces != []:
                             isOpponentMated = False
                             break
+
         if isOpponentMated:
             return isOpponentMated
         else:
             return False
     
     def play(self):
-                    
+        
+        for row in self.board.board:
+            for piece in row:
+                if piece != 0:
+                    if piece.color == 'white' and piece.isKing:
+                        self.board.whiteKing = piece
+                    elif piece.color == 'black' and piece.isKing:
+                        self.board.blackKing = piece
+                   
         if isKingChecked(self.board.whiteKing,self.board,None,None):
             self.whiteChecked = True
         else:
@@ -140,6 +152,8 @@ class GameChess():
                 self.board.board = dB[0]
                 self.resetBoard()
                 self.isTurn = True
+                self.board.positions = dB[2]
+                print(self.board.positions)
         
         else:
             
@@ -171,9 +185,34 @@ class GameChess():
                             for space in self.possibleSpaces:
                                 if coords[0] == space[0] and coords[1] == space[1]:
                                     self.drawCoords = self.board.move(self.pieceSelected,space,self.window)
-                                    self.possibleStalemate = self.board.stalemate
-                                    self.n.send(self.board.board)
+                                    
+                                    self.n.send([self.board.board,None])
+
+                                    changed = False
+                                    
+                                    #dBoard = [x[:] for x in self.board.board]
+                                    
+                                    for b in self.board.positions:
+                                        if self.board.board == b[0]:
+                                            b[1] += 1
+                                            changed = True
+                                            if b[1] == 2:
+                                                self.possibleStalemate = True
+                                            break
+                                        
+                                        changed = False
+                                        
+                                    if not changed:
+                                        
+                                        #dBoard = [x[:] for x in self.board.board]
+                                        self.n.send([[self.board.board,0],1])
+                                        
+                                    if self.pieceSelected.isPawn:
+                                        #dBoard = [x[:] for x in self.board.board]
+                                        self.n.send([[self.board.board,0],1])
+                    
                                     self.isTurn = False
+                                    
                             self.resetBoard()
                             
                         else:

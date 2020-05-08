@@ -28,6 +28,7 @@ print("waiting for Connection")
 p1 = 'white'
 p2 = 'black'
 turn = 'white'
+positions = [[board,0]]
 
 def threaded_client(conn,p):
     
@@ -35,6 +36,7 @@ def threaded_client(conn,p):
     global b
     global p1,p2
     global turn
+    global positions
     
     conn.send(pickle.dumps([p,b.whiteKing,b.blackKing]))
     
@@ -46,24 +48,31 @@ def threaded_client(conn,p):
     while True:
         try:
             data = pickle.loads(conn.recv(2048*8))
-            if type(data) is list:
-                board = data ## Receive Information and change global var board
+            
+            if data[1] == 0:
+                positions.append(data[0])
+            elif data[1] == 1:
+                positions = []
+                positions.append(data[0])
+            elif type(data[0]) is list:
+                board = data[0] ## Receive Information and change global var board
                 
                 if p == p1:
                     turn = 'black' ## Reply which player needs to move
                 elif p == p2:
                     turn = 'white'
-                    
+            
             if not data:
                 print('Disconnected')
                 break
             else:
                 print('Received') ## Received Data
-                print('Sending')
-                
-            conn.sendall(pickle.dumps([board,turn])) #Send Reply
+                print('Sending') ##Sending Reply
         except:
             break
+        
+        conn.sendall(pickle.dumps([board,turn,positions])) #Send Reply
+
     
     print('Lost Connection')
     conn.close()

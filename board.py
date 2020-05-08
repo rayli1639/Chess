@@ -62,7 +62,6 @@ class Board():
         
         dBoard = [x[:] for x in self.board]
         self.positions = [[dBoard,0]]
-        self.stalemate = False
     
     def drawBoard(self,window):
         ###Draw Board###
@@ -88,8 +87,6 @@ class Board():
     
     def move(self,piece,decision,window,dumBoard = None):
         ###Move the piece using a valid decision.###
-        takes = False
-        changed = False
         
         if dumBoard != None:
             board = dumBoard
@@ -100,9 +97,6 @@ class Board():
         col = decision[1]
         rowOld = piece.row
         colOld = piece.col
-        
-        if board[row][col] != 0:
-            takes = True
             
         if decision[-1] == 'CLong':
             board[row][col + 1] = Rook(row,col + 1, piece.color)
@@ -113,34 +107,14 @@ class Board():
             
         board[row][col] = piece
         board[rowOld][colOld] = 0
-        
         if dumBoard == None:
             
             piece.row = row
             piece.col = col
-            
-            dBoard = [x[:] for x in board]
-            
-            for b in self.positions:
-                if dBoard == b[0]:
-                    b[1] += 1
-                    changed = True
-                    if b[1] == 2:
-                        self.stalemate = True
-                    break
-                changed = False
-                
-            if not changed:
-                dBoard = [x[:] for x in board]
-                self.positions.append([dBoard,0])
-            if takes:
-                dBoard = [x[:] for x in board]
-                self.positions = [[dBoard,0]]
+            print(board[row][col])
                 
             if piece.isPawn: 
                 
-                dBoard = [x[:] for x in board]
-                self.positions = [[dBoard,0]]
                 piece.canMoveTwo = False
                 
                 if abs(row - rowOld) == 2: 
