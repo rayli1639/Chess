@@ -111,7 +111,6 @@ class Board():
             
             piece.row = row
             piece.col = col
-            print(board[row][col])
                 
             if piece.isPawn: 
                 

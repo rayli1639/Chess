@@ -249,6 +249,7 @@ class Pawn(Piece):
             self.image = 'whitePawn'
         self.canMoveTwo = True
         self.isPawn = True
+        self.type = 'pawn'
         self.canEnPassant = [False,[0,0]]
         
     def getSpaces(self,board,fake = False):
@@ -384,6 +385,8 @@ class Knight(Piece):
             self.image = 'blackKnight'
         else:
             self.image = 'whiteKnight'
+            
+        self.type = 'knight'
     
     def getSpaces(self,board,fake = False):
         if fake:
@@ -424,6 +427,8 @@ class Bishop(Piece):
         else:
             self.image = 'whiteBishop'
         
+        self.type = 'bishop'
+        
     def getSpaces(self,board,fake = False):
         if fake:
             board = board
@@ -445,6 +450,7 @@ class Rook(Piece):
             self.image = 'whiteRook'
         self.isRook = True
         self.canCastle = True
+        self.type = 'rook'
 
     def getSpaces(self,board,fake = False):
         if fake:
@@ -464,6 +470,7 @@ class Queen(Piece):
             self.image = 'blackQueen'
         else:
             self.image = 'whiteQueen'
+        self.type = 'queen'
             
     def getSpaces(self,board,fake = False):
         if fake: 
@@ -486,7 +493,8 @@ class King(Piece):
 
         else:
             self.image = 'whiteKing'
-            
+        
+        self.type = 'king'    
         self.isKing = True
         self.canCastle = True
     

@@ -35,7 +35,7 @@ class Network():
         
         try:
             self.client.send(pickle.dumps(data))
-            return pickle.loads(self.client.recv(2048*8)) ##Decode and receive data
+            return pickle.loads(self.client.recv(2048*64)) ##Decode and receive data
         except socket.error as e:
             print(e)
 
