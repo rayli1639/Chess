@@ -155,6 +155,8 @@ class GameChess():
                 self.resetBoard()
                 self.isTurn = True
                 self.board.positions = dB[2]
+                self.drawCoords = dB[3]
+                self.resetBoard()
                 
                 for pos in self.board.positions:
                     if pos[1] == 2:
@@ -198,9 +200,10 @@ class GameChess():
                                         
                                     self.drawCoords = self.board.move(self.pieceSelected,space,self.window)
                                     
-                                    self.n.send([self.board.board,None])
+                                    self.n.send([self.board.board,self.drawCoords])
 
                                     dBoard = [x[:] for x in self.board.board]
+                                    
                                     for b in self.board.positions:
                                         
                                         addCount = True
@@ -210,6 +213,7 @@ class GameChess():
                                         
                                         while row <= 7:
                                             while col <= 7:
+                                                
                                                 if (b[0][row][col] != 0 and 
                                                     dBoard[row][col] != 0):
                                                     if (b[0][row][col].type != dBoard[row][col].type or
@@ -225,7 +229,9 @@ class GameChess():
                                                     addCount = False
                                                     row = 7
                                                     col = 7
+                                                    
                                                 col += 1
+                                                
                                             row += 1
                                             col = 0
                                             

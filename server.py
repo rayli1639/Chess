@@ -30,6 +30,7 @@ p2 = 'black'
 turn = 'white'
 dBoard = [x[:] for x in board]
 positions = [[dBoard,0]]
+drawCoords = []
 
 def threaded_client(conn,p):
     
@@ -38,13 +39,14 @@ def threaded_client(conn,p):
     global p1,p2
     global turn
     global positions
+    global drawCoords
     
     conn.send(pickle.dumps([p,b.whiteKing,b.blackKing]))
     
     if p == p1:
-        print('You are white')
+        print('White Connected')
     elif p == p2:
-        print('You are black')
+        print('Black Connected')
         
     while True:
         try:
@@ -52,18 +54,17 @@ def threaded_client(conn,p):
             
             if data[1] == 0:
                 positions.append(data[0])
-                print(positions)
+                
             elif data[1] == 1:
                 positions = []
                 positions.append(data[0])
-                print(positions)
+                
             elif data[1] == 2:
-                print(positions[data[2]][1])
                 positions[data[2]][1] += 1
-                print(positions)
                 
             elif type(data[0]) is list:
                 board = [x[:] for x in data[0]] ## Receive Information and change global var board
+                drawCoords = data[1]
                 
                 if p == p1:
                     turn = 'black' ## Reply which player needs to move
@@ -80,7 +81,7 @@ def threaded_client(conn,p):
         except:
             break
 
-        conn.sendall(pickle.dumps([board,turn,positions])) #Send Reply
+        conn.sendall(pickle.dumps([board,turn,positions,drawCoords])) #Send Reply
 
     
     print('Lost Connection')
