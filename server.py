@@ -40,6 +40,7 @@ def threaded_client(conn,p):
     global turn
     global positions
     global drawCoords
+    global boardCreated
     
     conn.send(pickle.dumps([p,b.whiteKing,b.blackKing]))
     
@@ -47,6 +48,9 @@ def threaded_client(conn,p):
         print('White Connected')
     elif p == p2:
         print('Black Connected')
+    
+#     if not boardCreated:
+#         conn.send(str.encode('Waiting for Both Players to Connect'))
         
     while True:
         try:
