@@ -79,14 +79,13 @@ def threaded_client(conn,p):
                 print('Disconnected')
                 break
             else:
-                pass
-#               print('Received') ## Received Data
-#               print('Sending') ##Sending Reply
+                print('Received') ## Received Data
+                print('Sending') ##Sending Reply
+            
         except:
             break
-
+        
         conn.sendall(pickle.dumps([board,turn,positions,drawCoords])) #Send Reply
-
     
     print('Lost Connection')
     conn.close()
