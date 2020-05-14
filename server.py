@@ -22,14 +22,14 @@ b = Board()
 board = b.board
 boardCreated = False
 
-s.listen(2)
+s.listen()
 print("waiting for Connection")
 
 p1 = 'white'
 p2 = 'black'
 turn = 'white'
 dBoard = [x[:] for x in board]
-positions = [[dBoard,0]]
+positions = [[dBoard,'0']]
 drawCoords = []
 
 def threaded_client(conn,p):
@@ -54,18 +54,28 @@ def threaded_client(conn,p):
         
     while True:
         try:
-            data = pickle.loads(conn.recv(2048*32))
+            recv_data = b""
+            i = 0
+            while i == 0:
+                packet = conn.recv(4096)
+                recv_data += packet
+                if len(packet) < 4096:
+                    break
+                
+            data = pickle.loads(recv_data)
             
-            if data[1] == 0:
+            if data[1] == '0':
                 positions.append(data[0])
                 
-            elif data[1] == 1:
+            elif data[1] == '1':
                 positions = []
                 positions.append(data[0])
                 
             elif data[1] == 2:
-                positions[data[2]][1] += 1
-                
+                holder = positions[int(data[2])][1]
+                holder1 = int(holder)
+                holder1 += 1
+                positions[int(data[2])][1] = str(holder1)            
             elif type(data[0]) is list:
                 board = [x[:] for x in data[0]] ## Receive Information and change global var board
                 drawCoords = data[1]
@@ -82,23 +92,21 @@ def threaded_client(conn,p):
                 print('Received') ## Received Data
                 print('Sending') ##Sending Reply
             
+            dumped = pickle.dumps([board,turn,positions,drawCoords]) #Send Reply
+            print('Send Length: ' + str(len(dumped)))
+            conn.sendall(dumped)
+            
         except:
             break
         
-        conn.sendall(pickle.dumps([board,turn,positions,drawCoords])) #Send Reply
-    
     print('Lost Connection')
     conn.close()
 
-idCount = 0
+p = 'white'
 
 while True:
     conn,addr = s.accept()
     print('Connection to:', addr)
-    if idCount == 0:
-        start_new_thread(threaded_client,(conn, p1))
-        idCount += 1
-    elif idCount == 1:
-        start_new_thread(threaded_client,(conn, p2))
-        boardCreated = True
-    
+    start_new_thread(threaded_client,(conn, p))
+    p = 'black'
+

@@ -159,7 +159,7 @@ class GameChess():
                 self.resetBoard()
                 
                 for pos in self.board.positions:
-                    if pos[1] == 2:
+                    if int(pos[1]) == 2:
                         print('The match ended in a stalemate')
                         self.running = False
         
@@ -201,6 +201,8 @@ class GameChess():
                                     self.drawCoords = self.board.move(self.pieceSelected,space,self.window)
                                     
                                     self.n.send([self.board.board,self.drawCoords])
+                                    
+                                    print('this ran')
 
                                     dBoard = [x[:] for x in self.board.board]
                                     
@@ -241,18 +243,18 @@ class GameChess():
                                         
                                     if addCount:
                                         
-                                        info = self.n.send([dBoard,2,index]) #2 Signifies adding to stalemate counter
+                                        info = self.n.send([dBoard,2,str(index)]) #2 Signifies adding to stalemate counter
                                         for pos in info[2]:
-                                            if pos[1] == 2:
+                                            if int(pos[1]) == 2:
                                                 self.possibleStalemate = True                           
                                                 
                                     else:
                                         
-                                        self.n.send([[dBoard,0],0]) #0 Signifies adding a board state
+                                        self.n.send([[dBoard,'0'],'0']) #0 Signifies adding a board state
                                         
                                     if self.pieceSelected.isPawn or takes:
                                         
-                                        self.n.send([[dBoard,0],1]) #1 Signifies resetting stalemate counter
+                                        self.n.send([[dBoard,'0'],'1']) #1 Signifies resetting stalemate counter
                     
                                     self.isTurn = False
                                     

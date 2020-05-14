@@ -6,6 +6,7 @@ Created on May 4, 2020
 
 import socket
 import pickle
+import sys
 
 class Network():
     
@@ -23,6 +24,7 @@ class Network():
     def connect(self):
         try:
             self.client.connect(self.addr)
+            self.client.sendall(pickle.dumps('hello'))
             return pickle.loads(self.client.recv(2048)) #Receive Color
         except:
             pass
@@ -32,10 +34,19 @@ class Network():
         :param data: board
         :param return: board
         """
-        
+        print(data)
+        print(sys.getsizeof(data))
         try:
-            self.client.send(pickle.dumps(data))
-            return pickle.loads(self.client.recv(2048*32)) ##Decode and receive data
+            self.client.sendall(pickle.dumps(data))
+            print('data sent')
+            recv_data = b""
+            while True:
+                packet = self.client.recv(4096)
+                recv_data += packet
+                if len(packet) < 4096:
+                    break
+                print('packet received')
+            return pickle.loads(recv_data) ##Decode and receive data
         except socket.error as e:
             print(e)
 
