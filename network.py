@@ -23,8 +23,25 @@ class Network():
         
     def connect(self):
         try:
+            
             self.client.connect(self.addr)
-            return pickle.loads(self.client.recv(2048)) #Receive Color
+            
+            recv_data = b""
+            i = 0
+            while True:
+                packet = self.client.recv(4096)
+                
+                if i == 0:
+                    size = int.from_bytes(packet[:2],byteorder = 'big')
+                    packet = packet[2:]
+                    i = 1
+                recv_data += packet
+                
+                if len(recv_data) == size:
+                    break
+                
+            return pickle.loads(recv_data) #Receive Color
+        
         except:
             pass
     

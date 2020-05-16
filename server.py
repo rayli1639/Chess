@@ -42,7 +42,9 @@ def threaded_client(conn,p):
     global drawCoords
     global boardCreated
     
-    conn.send(pickle.dumps([p,b.whiteKing,b.blackKing]))
+    start_info = pickle.dumps([p,b.whiteKing,b.blackKing])
+    length = len(start_info).to_bytes(2, byteorder = 'big')
+    conn.send(length + start_info)
     
     if p == p1:
         print('White Connected')

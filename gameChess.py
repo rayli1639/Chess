@@ -207,8 +207,6 @@ class GameChess():
                                     add_to_pos = False
                                     index = None
                                     
-                                    print(self.board.positions)
-                                    
                                     for p in self.board.positions:
                                         if pos == p[0]:
                                             add_to_pos = True
