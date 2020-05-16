@@ -75,7 +75,8 @@ def threaded_client(conn,p):
                 positions[data[2]][1] += 1   
                          
             elif type(data[0]) is list:
-                board = [x[:] for x in data[0]] ## Receive Information and change global var board
+                ## Receive Information and change global var board
+                board = data[0]
                 drawCoords = data[1]
                 
                 if p == p1:

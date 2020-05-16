@@ -53,8 +53,15 @@ def create_FEN(board):
         final.append('/')
     
     return ''.join(final)
-                
-                
+
+def translate_FEN(fen_id):
+    x = 0
+    final = []
+    while x < len(fen_id):
+        pass
+        
+        
+                 
                     
                     
                 
@@ -195,11 +202,11 @@ class Board():
                 if piece.canEnPassant[0]:
                     
                     if piece.color == "white":
-                        if board[piece.row + 1][piece.col] !=0 and board[piece.row + 1][piece.col].color != piece.color:
+                        if board[piece.row + 1][piece.col] != 0 and board[piece.row + 1][piece.col].color != piece.color:
                             board[piece.row + 1][piece.col] = 0
                             
                     else:
-                        if board[piece.row - 1][piece.col] !=0 and board[piece.row - 1][piece.col].color != piece.color:
+                        if board[piece.row - 1][piece.col] != 0 and board[piece.row - 1][piece.col].color != piece.color:
                             board[piece.row - 1][piece.col] = 0   
                                
                 if piece.row == 0 or piece.row == 7:

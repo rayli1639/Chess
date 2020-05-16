@@ -199,13 +199,14 @@ class GameChess():
                                         takes = False
                                         
                                     self.drawCoords = self.board.move(self.pieceSelected,space,self.window)
-                                    
+                            
+                                    pos = create_FEN(self.board.board)
+
                                     self.n.send([self.board.board,self.drawCoords])
                                 
                                     add_to_pos = False
                                     index = None
                                     
-                                    pos = create_FEN(self.board.board)
                                     print(self.board.positions)
                                     
                                     for p in self.board.positions:
