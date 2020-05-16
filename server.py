@@ -56,10 +56,16 @@ def threaded_client(conn,p):
         try:
             recv_data = b""
             i = 0
-            while i == 0:
+            while True:
                 packet = conn.recv(4096)
+                
+                if i == 0:
+                    size = int.from_bytes(packet[:2],byteorder = 'big')
+                    packet = packet[2:]
+                    i = 1
                 recv_data += packet
-                if len(packet) < 4096:
+                
+                if len(recv_data) == size:
                     break
                 
             data = pickle.loads(recv_data)
@@ -91,10 +97,10 @@ def threaded_client(conn,p):
                 pass
 #                 print('Received') ## Received Data
 #                 print('Sending') ##Sending Reply
-            
-            dumped = pickle.dumps([board,turn,positions,drawCoords]) #Send Reply
+            dumped = pickle.dumps([board,turn,positions,drawCoords])
+            length = len(dumped).to_bytes(2, byteorder = 'big')
 #             print('Send Length: ' + str(len(dumped)))
-            conn.sendall(dumped)
+            conn.sendall(length + dumped)
             
         except:
             break

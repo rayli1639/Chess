@@ -24,7 +24,6 @@ class Network():
     def connect(self):
         try:
             self.client.connect(self.addr)
-            self.client.sendall(pickle.dumps('hello'))
             return pickle.loads(self.client.recv(2048)) #Receive Color
         except:
             pass
@@ -34,15 +33,29 @@ class Network():
         :param data: board
         :param return: board
         """
+        
         try:
-            self.client.sendall(pickle.dumps(data))
+            
+            data = pickle.dumps(data)
+            length = len(data).to_bytes(2,byteorder = 'big')
+            self.client.send(length + data)
+            
             recv_data = b""
+            i = 0
             while True:
                 packet = self.client.recv(4096)
+                
+                if i == 0:
+                    size = int.from_bytes(packet[:2],byteorder = 'big')
+                    packet = packet[2:]
+                    i = 1
                 recv_data += packet
-                if len(packet) < 4096:
+                
+                if len(recv_data) == size:
                     break
+
             return pickle.loads(recv_data) ##Decode and receive data
+        
         except socket.error as e:
             print(e)
 
