@@ -7,6 +7,60 @@ from pieces import Bishop,King,Queen,Pawn,Knight,Rook
 import pygame
 from pieceSprites import pieceSprites
 
+def create_FEN(board):
+    
+    final = []
+    
+    for row in board:
+        empty_counter = 0
+        
+        for space in row:
+            if space != 0:
+                if empty_counter != 0:
+                    final.append(str(empty_counter))
+                    empty_counter = 0
+                    
+                if space.color == 'white':
+                    if space.type == 'pawn':
+                        final.append('P')        
+                    elif space.type == 'knight':
+                        final.append('N')   
+                    elif space.type == 'bishop':
+                        final.append('B')   
+                    elif space.type == 'rook':
+                        final.append('R')
+                    elif space.type == 'queen':
+                        final.append('Q')
+                    elif space.type == 'king':
+                        final.append('K')
+                else:
+                    if space.type == 'pawn':
+                        final.append('p')        
+                    elif space.type == 'knight':
+                        final.append('n')   
+                    elif space.type == 'bishop':
+                        final.append('b')   
+                    elif space.type == 'rook':
+                        final.append('r')
+                    elif space.type == 'queen':
+                        final.append('q')
+                    elif space.type == 'king':
+                        final.append('k')
+            else:
+                empty_counter += 1
+        if empty_counter != 0:
+            final.append(str(empty_counter))
+        final.append('/')
+    
+    return ''.join(final)
+                
+                
+                    
+                    
+                
+            
+        
+
 def setPawns(board):
     
     i = 1
@@ -164,4 +218,3 @@ class Board():
                     window.blit(pieceSprites[piece.image],
                                     (piece.col*self.spaceSize,piece.row*self.spaceSize)
                                     )
-                    

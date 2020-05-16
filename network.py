@@ -34,18 +34,14 @@ class Network():
         :param data: board
         :param return: board
         """
-        print(data)
-        print(sys.getsizeof(data))
         try:
             self.client.sendall(pickle.dumps(data))
-            print('data sent')
             recv_data = b""
             while True:
                 packet = self.client.recv(4096)
                 recv_data += packet
                 if len(packet) < 4096:
                     break
-                print('packet received')
             return pickle.loads(recv_data) ##Decode and receive data
         except socket.error as e:
             print(e)

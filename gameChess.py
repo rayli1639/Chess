@@ -7,7 +7,7 @@ import pygame
 from board import Board
 from pieces import isKingChecked
 from network import Network
-
+from board import create_FEN
 
 class GameChess():
     
@@ -159,7 +159,7 @@ class GameChess():
                 self.resetBoard()
                 
                 for pos in self.board.positions:
-                    if int(pos[1]) == 2:
+                    if pos[1] == 2:
                         print('The match ended in a stalemate')
                         self.running = False
         
@@ -201,60 +201,32 @@ class GameChess():
                                     self.drawCoords = self.board.move(self.pieceSelected,space,self.window)
                                     
                                     self.n.send([self.board.board,self.drawCoords])
+                                
+                                    add_to_pos = False
+                                    index = None
                                     
-                                    print('this ran')
-
-                                    dBoard = [x[:] for x in self.board.board]
+                                    pos = create_FEN(self.board.board)
+                                    print(self.board.positions)
                                     
-                                    for b in self.board.positions:
+                                    for p in self.board.positions:
+                                        if pos == p[0]:
+                                            add_to_pos = True
+                                            index = self.board.positions.index(p)
                                         
-                                        addCount = True
-                                        index = None
-                                        row = 0
-                                        col = 0
+                                    if add_to_pos:
                                         
-                                        while row <= 7:
-                                            while col <= 7:
-                                                
-                                                if (b[0][row][col] != 0 and 
-                                                    dBoard[row][col] != 0):
-                                                    if (b[0][row][col].type != dBoard[row][col].type or
-                                                        b[0][row][col].color != dBoard[row][col].color):
-                                                        addCount = False
-                                                        row = 7
-                                                        col = 7
-                                                elif (b[0][row][col] == 0 and dBoard[row][col] != 0):
-                                                    addCount = False
-                                                    row = 7
-                                                    col = 7
-                                                elif (b[0][row][col] != 0 and dBoard[row][col] == 0):
-                                                    addCount = False
-                                                    row = 7
-                                                    col = 7
-                                                    
-                                                col += 1
-                                                
-                                            row += 1
-                                            col = 0
-                                            
-                                        if addCount:
-                                            index = self.board.positions.index(b)
-                                            break
-                                        
-                                    if addCount:
-                                        
-                                        info = self.n.send([dBoard,2,str(index)]) #2 Signifies adding to stalemate counter
+                                        info = self.n.send([pos,2,index]) #2 Signifies adding to stalemate counter
                                         for pos in info[2]:
-                                            if int(pos[1]) == 2:
+                                            if pos[1] == 2:
                                                 self.possibleStalemate = True                           
                                                 
                                     else:
                                         
-                                        self.n.send([[dBoard,'0'],'0']) #0 Signifies adding a board state
+                                        self.n.send([[pos,0],0]) #0 Signifies adding a board state
                                         
                                     if self.pieceSelected.isPawn or takes:
                                         
-                                        self.n.send([[dBoard,'0'],'1']) #1 Signifies resetting stalemate counter
+                                        self.n.send([[pos,0],1]) #1 Signifies resetting stalemate counter
                     
                                     self.isTurn = False
                                     
